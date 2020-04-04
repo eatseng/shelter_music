@@ -6,15 +6,27 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "nodemon": "^2.0.2",
+    "npm-run-all": "^4.1.5",
+    "react": "^0.0.0-experimental-aae83a4b9",
+    "react-dom": "^0.0.0-experimental-aae83a4b9",
+    "react-relay": "^0.0.0-experimental-8cc94ddc",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "^3.4.1",
+    "relay-runtime": "^9.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "relay": "yarn run relay-compiler --schema schema.graphql --src ./src/ --watchman false $@",
+    "server": "nodemon server/index.js",
+    "start": "yarn run relay && react-scripts start",
+    "build": "yarn run relay && react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev": "run-p server start"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -30,5 +42,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "proxy": "http://localhost:4000",
+  "devDependencies": {
+    "graphql": "^15.0.0",
+    "relay-compiler": "^9.0.0"
   }
 }

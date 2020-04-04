@@ -1,0 +1,18 @@
+.facebookSignInButton {
+  align-items: center;
+  background-color: #2A91DB;
+  box-sizing: border-box;
+  color: white;
+  cursor: pointer;
+	display: flex;
+  justify-content: center;
+  margin: 16px;
+  height: 60px;
+  width: 200px;
+}
+
+.facebookSignInButton:hover,
+.facebookSignInButton:focus {
+  background: #2180c4;
+}
+

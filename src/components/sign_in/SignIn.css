@@ -1,0 +1,35 @@
+.signIn {
+  align-items: center;
+	display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-around;
+}
+
+.signUpButton {
+  align-items: center;
+  border: 1px solid lightgray;
+  cursor: pointer;
+  display: flex;
+  display: flex;
+  height: 60px;
+  justify-content: center;
+  margin: 16px;
+  width: 200px;
+}
+
+.signUpButton:focus,
+.signUpButton:hover {
+  background-color: #bfbfbf;
+}
+
+.signInTitle {
+  font-size: 24px;
+}
+
+.subContainer {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+}
