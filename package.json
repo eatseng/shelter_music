@@ -17,7 +17,8 @@
     "react-relay": "^0.0.0-experimental-8cc94ddc",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.1",
-    "relay-runtime": "^9.0.0"
+    "relay-runtime": "^9.0.0",
+    "uuid": "^7.0.3"
   },
   "scripts": {
     "relay": "yarn run relay-compiler --schema schema.graphql --src ./src/ --watchman false $@",

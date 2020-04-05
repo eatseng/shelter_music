@@ -6,6 +6,10 @@
   justify-content: space-around;
 }
 
+.signInError {
+  color: red;
+}
+
 .signUpButton {
   align-items: center;
   border: 1px solid lightgray;
