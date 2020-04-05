@@ -6,12 +6,13 @@ class Auth {
     this.isGoogleAuthenticated = false;
     this.isGoogleLoaded = false;
     this.success = {};
+    
     const signinChanged = (val) => this.isGoogleAuthenticated = val;
 
     window['googleSDKLoaded'] = () => {
       window['gapi'].load('auth2', () => {
         this.auth2 = window['gapi'].auth2.init({
-          client_id: '990982699847-5gbnem13btv2gd15vnbuomovr6miupua.apps.googleusercontent.com',
+          client_id: process.env.REACT_APP_GOOGLE_SIGN_IN_CLIENT_ID,
           cookiepolicy: 'single_host_origin',
           scope: 'profile email'
         });
@@ -27,7 +28,6 @@ class Auth {
             Object.values(this.failure).map(callback => callback(error));
           },
         );
-
         this.isGoogleLoaded = true;
       });
     }
