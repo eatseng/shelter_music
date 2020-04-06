@@ -53,7 +53,6 @@ class Auth {
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.withCredentials = true;
     xhr.onload = () => {
-      console.log('current cookie', document.cookie)
       if (xhr.status !== 200) {
         Object.values(this.failure).map(
           callback => callback(`${xhr.status} Google authentication failed!`)

@@ -1,9 +1,5 @@
 const UserModel = require('../models/User');
 
-const dotenv = require('dotenv');
-
-dotenv.config();
-
 const isValidSession = module.exports = () =>
   async (req, res, next) => { 
 

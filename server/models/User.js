@@ -48,6 +48,29 @@ User.prototype.get = function (userID) {
 
 }
 
+User.prototype.logout = function (userID) {
+
+  if (userID == null) {
+    throw 'userID is null!';
+  }
+
+  return new Promise((resolve, reject) => {
+    this.connection.query(`
+      UPDATE users SET password = '' WHERE id = ?
+      `,
+      userID,
+      (error, results, fields) => {
+        if (error != null) {
+          reject(error);
+        } else {
+          resolve();
+        }
+      },
+    );
+  });
+
+}
+
 User.prototype.upsert = function (user) {
 
   if (user == null) {

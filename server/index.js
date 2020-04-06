@@ -4,9 +4,9 @@ const express = require('express');
 const mysqlSession = require('express-mysql-session');
 const session = require('express-session');
 const graphqlHTTP = require("express-graphql");
-const uuidv4 = require('uuid/v4');
 
 const isValidSession = require('./utils/isValidSession');
+const logout = require('./utils/logout');
 const options = require('./utils/options');
 const resolvers = require('./graphql/resolvers');
 const schema = require('./graphql/schema');
@@ -21,21 +21,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 app.use(session({
-	cookie: {
-    expires: 30 * 24 * 60 * 60 * 1000,
-  },
-  genid: (req) => {
-    return uuidv4(); // use UUIDs for session IDs
-  },
-  name: process.env.SESSION_ID,
-  resave: false,
-  saveUninitialized: false,
-  secret: process.env.SESSION_SECRET,
+  ...options.expressSession,
   store: new MySQLStore(options.mysqlSession),
 }));
 
 app.use(
-  "/graphql",
+  '/graphql',
   cors({origin: 'http://localhost:3000'}),
   isValidSession(),
   graphqlHTTP({schema, rootValue: resolvers}),
@@ -47,10 +38,12 @@ app.use('/heartbeat', (req, res) => {
 });
 
 app.use(
-  "/login",
-  cors({origin: 'http://localhost:3000',}),
+  '/login',
+  cors({origin: 'http://localhost:3000'}),
   verifyGoogleToken(),
 );
+
+app.use('/logout', cors({origin: 'http://localhost:3000'}), logout());
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
