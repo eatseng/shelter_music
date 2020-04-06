@@ -13,6 +13,14 @@ code {
     monospace;
 }
 
+.fourZeroFour {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
 html {
   height: 100%;
 }

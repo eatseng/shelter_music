@@ -30,7 +30,7 @@ function SignIn(props) {
         })
         .catch(({error}) => setAuthFailure(error));
     }
-  }, [isSignedIn]);
+  }, [from, history, isSignedIn]);
 
   useEffect(() => {
     const failureCallback = ({error}) => {
@@ -43,12 +43,12 @@ function SignIn(props) {
       auth2.isSignedIn.get() === true && from != null && history.replace(from);
     };
     if (Auth.isGoogleAuthenticated !== true) {
-      Auth.registerFailure('SignIn', failureCallback);
-      Auth.registerSuccess('SignIn', successCallback);
+      Auth.registerFailure('SignInFailure', failureCallback);
+      Auth.registerSuccess('SignInSuccess', successCallback);
     }
     return () => {
-      Auth.removeFailure('SignIn', failureCallback);
-      Auth.removeSuccess('SignIn', successCallback);
+      Auth.removeFailure('SignInFailure', failureCallback);
+      Auth.removeSuccess('SignInSuccess', successCallback);
     };
   });
 

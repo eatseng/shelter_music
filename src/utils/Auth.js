@@ -21,8 +21,10 @@ class Auth {
         this.auth2.isSignedIn.listen(signinChanged);
 
         this.auth2.then(
-          (onSuccess) => {
-            Object.values(this.success).map(callback => callback(onSuccess));
+          (auth2) => {
+            const googleUser = auth2.currentUser.get();
+            this._authenticate(googleUser.getAuthResponse().id_token);
+            Object.values(this.success).map(callback => callback(auth2));
           },
           (error) => {
             Object.values(this.failure).map(callback => callback(error));
@@ -43,6 +45,22 @@ class Auth {
         fjs.parentNode.insertBefore(script, fjs);
       }(document, 'script', 'google-jssdk'));
     }
+  }
+
+  _authenticate (idToken) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${process.env.REACT_APP_SERVER_END_POINT}/login`);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.withCredentials = true;
+    xhr.onload = () => {
+      console.log('current cookie', document.cookie)
+      if (xhr.status !== 200) {
+        Object.values(this.failure).map(
+          callback => callback(`${xhr.status} Google authentication failed!`)
+        );
+      }
+    };
+    xhr.send(`idToken=${idToken}`);
   }
   
   isAuthenticated() {

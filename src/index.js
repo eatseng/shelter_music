@@ -64,6 +64,9 @@ ReactDOM.render(
         <Route exact path="/login">
           {signInLoader}
         </Route>
+        <Route>
+          <div className="fourZeroFour">404 not found</div>
+        </Route>
       </Switch>
     </Router>
   </React.StrictMode>,
