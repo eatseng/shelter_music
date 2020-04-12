@@ -1,5 +1,5 @@
 import Auth from './utils/Auth';
-import Main from './components/Main.react';
+import Home from './components/Home.react';
 import SignIn from './components/sign_in/SignIn.react';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -17,9 +17,13 @@ import './index.css';
 
 const {Suspense} = React;
 
-function mainLoader () {
+function homeLoader () {
   return (
-    <Main />
+    <RelayEnvironmentProvider environment={RelayEnvironment}>
+      <Suspense fallback={'Loading...'}>
+        <Home />
+      </Suspense>
+    </RelayEnvironmentProvider>
   );
 }
 
@@ -55,12 +59,12 @@ ReactDOM.render(
   <React.StrictMode>
     <Router>
       <Switch>
-        <Route exact path="/">
+        <PrivateRoute exact path="/">
+          {homeLoader}
+        </PrivateRoute>
+        <Route exact path="/log">
           {signInLoader}
         </Route>
-        <PrivateRoute exact path="/main">
-          {mainLoader}
-        </PrivateRoute>
         <Route exact path="/login">
           {signInLoader}
         </Route>

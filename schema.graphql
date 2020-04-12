@@ -1,26 +1,21 @@
-type Movie {
-  id: ID!
-  posterPath: String!
-  releaseDate: String!
-  title: String!
-  voteAverage: Float!
-}
-
-type MovieDetails {
-  backdropPath: String!
-  genres: [String!]
-  id: ID!
-  overview: String!
-  posterPath: String!
-  releaseDate: String!
-  runtime: Int!
-  tagline: String!
-  title: String!
-  voteAverage: Float!
+type Mutation {
+  upsertRoom(input: UpsertRoomInput!): Room
 }
 
 type Query {
-  movie(id: Int!): MovieDetails
-  popularMovies: [Movie!]
+  user: User
+}
+
+type Room {
+  name: String!
+}
+
+input UpsertRoomInput {
+  name: String!
+}
+
+type User {
+  givenName: String!
+  picture: String!
 }
 

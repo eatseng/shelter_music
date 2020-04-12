@@ -1,4 +1,4 @@
-const UserModel = require('../models/User');
+const UserModel = require('../models/user');
 
 const logout = module.exports = () =>
   async (req, res, next) => { 

@@ -1,0 +1,50 @@
+.home {
+  align-items: center;
+	display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-around;
+}
+
+.homeAvatar:hover .homeAvatarDropDown {
+    display: flex;
+    position: absolute;
+  }
+
+.homeAvatarDropDown {
+  display: none;
+}
+
+.homeDropDownButton {
+  border: 1px solid lightgray;
+  height: 40px;
+  width: 60px;
+}
+
+.homeButton {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+}
+
+.homeButton:focus,
+.homeButton:hover {
+  background-color: #bfbfbf;
+}
+
+.homeCreateButton {
+  border: 1px solid lightgray;
+  height: 60px;
+  margin: 16px;
+  width: 200px;
+}
+
+.homeTitle {
+  font-size: 24px;
+}
+
+.homeTop {
+  display: flex;
+  justify-content: space-around;
+}

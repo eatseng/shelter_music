@@ -50,6 +50,7 @@
   },
   "proxy": "http://localhost:4000",
   "devDependencies": {
+    "babel-plugin-relay": "^9.0.0",
     "graphql": "^15.0.0",
     "relay-compiler": "^9.0.0"
   }

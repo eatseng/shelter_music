@@ -14,7 +14,7 @@ function SignIn(props) {
   const [authFailure, setAuthFailure] = useState('');
   const [isAuthLoaded, setAuthLoaded] = useState(Auth.isLoaded());
   const [isSignedIn, setSignedIn] = useState(Auth.isAuthenticated());
-  const {from} = location.state || {from: null};
+  const {from, isLogout} = location.state || {from: null, isLogout: false};
 
   const clickHandler = useCallback(() => {
     if (isSignedIn === true) {
@@ -26,7 +26,7 @@ function SignIn(props) {
         .then((onSuccess) => {
           setSignedIn(true);
           setAuthFailure('');
-          from != null && history.replace(from);
+          history.push({pathname: "/"});
         })
         .catch(({error}) => setAuthFailure(error));
     }
@@ -46,6 +46,7 @@ function SignIn(props) {
       Auth.registerFailure('SignInFailure', failureCallback);
       Auth.registerSuccess('SignInSuccess', successCallback);
     }
+    setSignedIn(Auth.isAuthenticated() && !isLogout);
     return () => {
       Auth.removeFailure('SignInFailure', failureCallback);
       Auth.removeSuccess('SignInSuccess', successCallback);
@@ -57,15 +58,17 @@ function SignIn(props) {
     : (
         <div className="signIn">
           <div className="signInTitle">Hello, Welcome to Shelter Music</div>
-          {from?.pathname != null &&
+          {from?.pathname !== '/' && from?.pathname != null &&
             <div>You must log in to view the page at {from.pathname}</div>
           }
-          {authFailure !== '' &&
+          {from?.pathname !== '/' && authFailure !== '' &&
             <div className="signInError">{`Error: {authFailure}`}</div>}
           <div className="subContainer">
             <div>Login</div>
             <FacebookSignInButton />
-            <GoogleSignInButton isSignedIn={isSignedIn} onClick={clickHandler} />
+            <GoogleSignInButton
+              isSignedIn={isSignedIn && isLogout === false}
+              onClick={clickHandler} />
           </div>
           <div className="subContainer">
             <div>or</div>

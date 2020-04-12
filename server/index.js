@@ -8,6 +8,7 @@ const graphqlHTTP = require("express-graphql");
 const isValidSession = require('./utils/isValidSession');
 const logout = require('./utils/logout');
 const options = require('./utils/options');
+const preflightCors = require('./utils/preflightCors');
 const resolvers = require('./graphql/resolvers');
 const schema = require('./graphql/schema');
 const verifyGoogleToken = require('./utils/verifyGoogleToken');
@@ -27,15 +28,21 @@ app.use(session({
 
 app.use(
   '/graphql',
+  preflightCors({origin: 'http://localhost:3000'}),
   cors({origin: 'http://localhost:3000'}),
   isValidSession(),
-  graphqlHTTP({schema, rootValue: resolvers}),
+  graphqlHTTP((req, res) => ({schema, rootValue: resolvers(res)})),
 );
 
-app.use('/heartbeat', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify({ health: `ok` }));
-});
+app.use(
+  '/heartbeat', 
+  cors({origin: 'http://localhost:3000'}),
+  (req, res) => {
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ health: `ok` }));
+  },
+);
 
 app.use(
   '/login',

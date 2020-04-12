@@ -14,7 +14,7 @@ go to http://localhost:3000 in your chrome browser.
 
 There may be dependencies missing such as GraphQL and Relay
 
-graphql.org/graphql-js/
+https://graphql.org/graphql-js/
 npm install graphql --save
 
 https://relay.dev/docs/en/experimental/step-by-step
@@ -25,3 +25,7 @@ npm install --save-dev relay-compiler graphql
 Yarn Users
 yarn add relay-runtime react-relay@experimental
 yarn add --dev relay-compiler graphql babel-plugin-relay
+
+Comment out isValidSession in graphql route then get schema from the graphql endpoint
+https://www.npmjs.com/package/get-graphql-schema
+get-graphql-schema [OPTIONS] ENDPOINT_URL > schema.graphql

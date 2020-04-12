@@ -22,8 +22,7 @@ class Auth {
 
         this.auth2.then(
           (auth2) => {
-            const googleUser = auth2.currentUser.get();
-            this._authenticate(googleUser.getAuthResponse().id_token);
+            this.authenticate();
             Object.values(this.success).map(callback => callback(auth2));
           },
           (error) => {
@@ -47,7 +46,17 @@ class Auth {
     }
   }
 
-  _authenticate (idToken) {
+  authenticate (callback = () => {}) {
+    const googleUser = this.auth2.currentUser.get();
+    if (googleUser.isSignedIn() === true) {
+      this._authenticateRequest(
+        googleUser.getAuthResponse().id_token,
+        callback
+      );
+    }
+  }
+
+  _authenticateRequest (idToken, callback) {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `${process.env.REACT_APP_SERVER_END_POINT}/login`);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -58,6 +67,7 @@ class Auth {
           callback => callback(`${xhr.status} Google authentication failed!`)
         );
       }
+      callback();
     };
     xhr.send(`idToken=${idToken}`);
   }
@@ -70,11 +80,23 @@ class Auth {
     return this.isGoogleLoaded;
   }
 
-  login() {
-    return this.auth2.signIn();
+  async login() {
+    await this.auth2.signIn();
+    return new Promise((resolve) => this.authenticate(resolve))
   }
 
   logout() {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `${process.env.REACT_APP_SERVER_END_POINT}/logout`);
+    xhr.withCredentials = true;
+    xhr.onload = () => {
+      if (xhr.status !== 200) {
+        Object.values(this.failure).map(
+          callback => callback(`${xhr.status} Google authentication failed!`)
+        );
+      }
+    };
+    xhr.send();
     return this.auth2.disconnect();
   }
 

@@ -1,5 +1,5 @@
 const {OAuth2Client} = require('google-auth-library');
-const UserModel = require('../models/User');
+const UserModel = require('../models/user');
 
 const dotenv = require('dotenv');
 const uuidv4 = require('uuid/v4');
