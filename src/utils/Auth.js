@@ -26,7 +26,7 @@ class Auth {
             Object.values(this.success).map(callback => callback(auth2));
           },
           (error) => {
-            Object.values(this.failure).map(callback => callback(error));
+            Object.values(this.failure).map(callback => callback({error}));
           },
         );
         this.isGoogleLoaded = true;
@@ -46,34 +46,42 @@ class Auth {
     }
   }
 
-  authenticate (callback = () => {}) {
+  authenticate (onSuccess = () => {}, onFailure = () => {}) {
     const googleUser = this.auth2.currentUser.get();
     if (googleUser.isSignedIn() === true) {
       this._authenticateRequest(
         googleUser.getAuthResponse().id_token,
-        callback
+        onSuccess,
+        onFailure,
       );
     }
   }
 
-  _authenticateRequest (idToken, callback) {
+  _authenticateRequest (idToken, onSuccess, onFailure) {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', `${process.env.REACT_APP_SERVER_END_POINT}/login`);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.withCredentials = true;
     xhr.onload = () => {
+      this.isGoogleAuthenticated = true;
       if (xhr.status !== 200) {
         Object.values(this.failure).map(
-          callback => callback(`${xhr.status} Google authentication failed!`)
+          callback =>
+            callback({error: `${xhr.status} Google authentication failed!`}),
         );
+        this.isGoogleAuthenticated = false;
+        onFailure({error: xhr.status});
+      } else {
+        onSuccess()
       }
-      callback();
     };
     xhr.send(`idToken=${idToken}`);
   }
   
   isAuthenticated() {
-    return this.auth2 != null && this.auth2.isSignedIn.get();
+    return this.auth2 != null &&
+      this.auth2.isSignedIn.get() &&
+      this.isGoogleAuthenticated === true;
   }
 
   isLoaded() {
@@ -82,7 +90,7 @@ class Auth {
 
   async login() {
     await this.auth2.signIn();
-    return new Promise((resolve) => this.authenticate(resolve))
+    return new Promise((resolve, reject) => this.authenticate(resolve, reject))
   }
 
   logout() {

@@ -6,7 +6,7 @@ function Avatar(props) {
   return (
     <div className="userAvatar">
       <img
-        alt={`${props.title}'s photo`}
+        alt={`${props.title}`}
         className="userAvatarImage"
         src={props.url}
         width={150} />

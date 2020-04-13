@@ -1,5 +1,6 @@
 const apiRequest = require("../utils/apiCall");
 const dotenv = require('dotenv');
+const mongodb = require('mongodb');
 const mysql = require('mysql');
 const options = require('../utils/options')
 
@@ -10,17 +11,22 @@ function User(params) {
     null;
   }
 
-  this.connection = mysql.createConnection({
+  this.mongo = new mongodb.MongoClient(
+    options.mongoSession.url,
+    options.mongoSession.options,
+  );
+  this.mysql = mysql.createConnection({
     ...options.mysqlSession,
     connectionLimit: 10,
   });
 
-  this.connection.connect();
+  this.mysql.connect();
 };
 
-User.prototype.disconnect = function (user, mysqlCb) {
+User.prototype.disconnect = function () {
 
-  this.connection.end()
+  this.mongo.close();
+  this.mysql.end();
 
 }
 
@@ -31,7 +37,7 @@ User.prototype.get = function (userID) {
   }
 
   return new Promise((resolve, reject) => {
-    this.connection.query(`
+    this.mysql.query(`
       SELECT * FROM users WHERE id = ?
       `,
       userID,
@@ -55,7 +61,7 @@ User.prototype.logout = function (userID) {
   }
 
   return new Promise((resolve, reject) => {
-    this.connection.query(`
+    this.mysql.query(`
       UPDATE users SET password = '' WHERE id = ?
       `,
       userID,
@@ -78,7 +84,7 @@ User.prototype.upsert = function (user) {
   } 
 
   return new Promise((resolve, reject) => {
-    this.connection.query(`
+    this.mysql.query(`
       INSERT INTO users
       SET ?
       ON DUPLICATE KEY UPDATE 
@@ -100,7 +106,35 @@ User.prototype.upsert = function (user) {
       },
     );
   });
+}
 
+User.prototype.upsertMongo = async function (user) {
+
+  await this.mongo.connect();
+
+  const db = this.mongo.db(options.mongoSession.database);
+  const c = db.collection('participants');
+
+  const participant = {
+    email: user.email,
+    familyName: user.family_name,
+    givenName: user.given_name,
+    isDeleted: false,
+    name: user.name,
+    picture: user.picture,
+  };
+
+  return c.updateOne(
+    {id: user.id},
+    {
+      $set: participant,
+      $setOnInsert: {
+        invites: [],
+        rooms: [],
+      }
+    },
+    {upsert: true},
+  );
 };
 
 module.exports = User;

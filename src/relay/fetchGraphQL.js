@@ -1,5 +1,3 @@
-import Auth from '../utils/Auth';
-
 const fetchGraphQL = async (text, variables) => {
   const response = await fetch('http://localhost:4000/graphql', {
     body: JSON.stringify({

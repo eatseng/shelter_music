@@ -11,13 +11,17 @@ const {useCallback, useEffect, useState} = React;
 function SignIn(props) {
   const history = useHistory();
   const location = useLocation();
-  const [authFailure, setAuthFailure] = useState('');
-  const [isAuthLoaded, setAuthLoaded] = useState(Auth.isLoaded());
-  const [isSignedIn, setSignedIn] = useState(Auth.isAuthenticated());
   const {from, isLogout} = location.state || {from: null, isLogout: false};
+  const [authFailure, setAuthFailure] = useState('');
+  const [authCnt, setAuthCnt] = useState(
+    {success: Auth.isLoaded() ? 1 : 0, error: 0},
+  );
+  const [isSignedIn, setSignedIn] = useState(
+    Auth.isAuthenticated() && isLogout === false,
+  );
 
   const clickHandler = useCallback(() => {
-    if (isSignedIn === true) {
+    if (isSignedIn) {
       Auth.logout()
         .then((onSuccess) => setSignedIn(false))
         .catch(({error}) => setAuthFailure(error));
@@ -28,32 +32,36 @@ function SignIn(props) {
           setAuthFailure('');
           history.push({pathname: "/"});
         })
-        .catch(({error}) => setAuthFailure(error));
+        .catch(({error}) => setAuthFailure(`${error} Google auth failed!`));
     }
-  }, [from, history, isSignedIn]);
+  }, [history, isSignedIn]);
 
   useEffect(() => {
     const failureCallback = ({error}) => {
-      setAuthLoaded(true);
+      setAuthCnt({...authCnt, error: authCnt.error + 1});
       setAuthFailure(error);
     };
     const successCallback = (auth2) => {
-      setAuthLoaded(true);
-      setSignedIn(auth2.isSignedIn.get());
-      auth2.isSignedIn.get() === true && from != null && history.replace(from);
+      setTimeout(() => {
+        setAuthCnt({...authCnt, success: authCnt.success + 1});
+        setSignedIn(auth2.isSignedIn.get());
+        auth2.isSignedIn.get() === true &&
+          from != null &&
+          history.replace(from);
+        }, 0,
+      );
     };
-    if (Auth.isGoogleAuthenticated !== true) {
-      Auth.registerFailure('SignInFailure', failureCallback);
-      Auth.registerSuccess('SignInSuccess', successCallback);
-    }
-    setSignedIn(Auth.isAuthenticated() && !isLogout);
+
+    Auth.registerFailure('SignInFailure', failureCallback);
+    Auth.registerSuccess('SignInSuccess', successCallback);
+
     return () => {
       Auth.removeFailure('SignInFailure', failureCallback);
       Auth.removeSuccess('SignInSuccess', successCallback);
     };
-  });
+  }, [authCnt, from, history]);
 
-  return isAuthLoaded !== true
+  return authCnt.error + authCnt.success === 0
     ? <div className="signIn">Loading...</div>
     : (
         <div className="signIn">
@@ -61,13 +69,14 @@ function SignIn(props) {
           {from?.pathname !== '/' && from?.pathname != null &&
             <div>You must log in to view the page at {from.pathname}</div>
           }
-          {from?.pathname !== '/' && authFailure !== '' &&
-            <div className="signInError">{`Error: {authFailure}`}</div>}
+          {authCnt.error > 1 && authFailure !== '' &&
+            <div className="signInError">{`Error: {authFailure}`}</div>
+          }
           <div className="subContainer">
             <div>Login</div>
             <FacebookSignInButton />
             <GoogleSignInButton
-              isSignedIn={isSignedIn && isLogout === false}
+              isSignedIn={isSignedIn}
               onClick={clickHandler} />
           </div>
           <div className="subContainer">

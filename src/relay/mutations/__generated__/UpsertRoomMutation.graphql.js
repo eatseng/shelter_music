@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 93ae2f362919c93cbbf389a03ed910ea
+ * @relayHash 57999de114033f315361f1dc47bf2871
  */
 
 /* eslint-disable */
@@ -16,8 +16,11 @@ export type UpsertRoomMutationVariables = {|
   input: UpsertRoomInput
 |};
 export type UpsertRoomMutationResponse = {|
-  +upsertRoom: ?{|
-    +name: string
+  +upsert: ?{|
+    +error: ?string,
+    +room: ?{|
+      +name: string
+    |},
   |}
 |};
 export type UpsertRoomMutation = {|
@@ -31,8 +34,11 @@ export type UpsertRoomMutation = {|
 mutation UpsertRoomMutation(
   $input: UpsertRoomInput!
 ) {
-  upsertRoom(input: $input) {
-    name
+  upsert: upsertRoom(input: $input) {
+    error
+    room {
+      name
+    }
   }
 }
 */
@@ -49,7 +55,7 @@ var v0 = [
 v1 = [
   {
     "kind": "LinkedField",
-    "alias": null,
+    "alias": "upsert",
     "name": "upsertRoom",
     "storageKey": null,
     "args": [
@@ -59,15 +65,33 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "Room",
+    "concreteType": "RoomMutationResponse",
     "plural": false,
     "selections": [
       {
         "kind": "ScalarField",
         "alias": null,
-        "name": "name",
+        "name": "error",
         "args": null,
         "storageKey": null
+      },
+      {
+        "kind": "LinkedField",
+        "alias": null,
+        "name": "room",
+        "storageKey": null,
+        "args": null,
+        "concreteType": "Room",
+        "plural": false,
+        "selections": [
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "name": "name",
+            "args": null,
+            "storageKey": null
+          }
+        ]
       }
     ]
   }
@@ -92,12 +116,12 @@ return {
     "operationKind": "mutation",
     "name": "UpsertRoomMutation",
     "id": null,
-    "text": "mutation UpsertRoomMutation(\n  $input: UpsertRoomInput!\n) {\n  upsertRoom(input: $input) {\n    name\n  }\n}\n",
+    "text": "mutation UpsertRoomMutation(\n  $input: UpsertRoomInput!\n) {\n  upsert: upsertRoom(input: $input) {\n    error\n    room {\n      name\n    }\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '9abe48bba8eae01001611b19c60e151f';
+(node/*: any*/).hash = 'a9444b61d25e809fec255b824f4459e4';
 
 module.exports = node;

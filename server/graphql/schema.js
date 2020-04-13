@@ -6,7 +6,14 @@ module.exports = buildSchema(`
   }
 
   type Room {
+    creator: User
+    id: String
     name: String!
+  }
+
+  type RoomMutationResponse {
+    error: String
+    room: Room
   }
 
   type User {
@@ -15,10 +22,11 @@ module.exports = buildSchema(`
   }
 
   type Mutation {
-  	upsertRoom(input: UpsertRoomInput!): Room
+  	upsertRoom(input: UpsertRoomInput!): RoomMutationResponse
   }
 
   type Query {
+    rooms: [Room!]
     user: User
   }
 `);

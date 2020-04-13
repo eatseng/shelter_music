@@ -1,14 +1,15 @@
 import graphql from 'babel-plugin-relay/macro';
 import {commitMutation} from 'react-relay';
 
-type UpsertRoomData = {
-  name: String,
-};
-
 const query = graphql`
   mutation UpsertRoomMutation($input: UpsertRoomInput!) {
-    upsertRoom(input: $input) {
-      name
+    upsert: upsertRoom(input: $input) {
+      error
+      room {
+        ... on Room {
+          name
+        }
+      }
     }
   }
 `;

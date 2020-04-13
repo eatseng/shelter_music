@@ -49,6 +49,7 @@ const verifyGoogleToken = module.exports = () =>
 
           const User = new UserModel();
           const isSuccess = await User.upsert(user)
+          const isSuccessMongo = await User.upsertMongo(user)
           User.disconnect();
 
           req.session.userID = user.id;

@@ -20,7 +20,7 @@ const {Suspense} = React;
 function homeLoader () {
   return (
     <RelayEnvironmentProvider environment={RelayEnvironment}>
-      <Suspense fallback={'Loading...'}>
+      <Suspense fallback={<div className="signIn">Loading...</div>}>
         <Home />
       </Suspense>
     </RelayEnvironmentProvider>

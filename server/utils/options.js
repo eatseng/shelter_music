@@ -17,6 +17,14 @@ module.exports = {
     saveUninitialized: false,
     secret: process.env.SESSION_SECRET,
   },
+  mongoSession: {
+    database: process.env.MONGO_DATABASE,
+    options: {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+    },
+    url: process.env.MONGO_URL,
+  },
   mysqlSession: {
     host: process.env.MYSQL_HOST,
     port: process.env.MYSQL_PORT,
