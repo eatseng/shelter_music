@@ -1,0 +1,41 @@
+.room {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-around;
+}
+
+.roomButton {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+}
+
+.roomButton:focus,
+.roomButton:hover {
+  background-color: green;
+}
+
+.roomCreateButton {
+  background-color: lightgreen;
+  border: 1px solid lightgray;
+  height: 60px;
+  margin: 16px 0px 16px 0px;
+  width: 200px;
+}
+
+
+.roomContainer {
+  display: flex;
+  width: 92%;
+}
+
+.roomContent {
+  box-sizing: border-box;
+  flex-grow: 1;
+  flex-shrink: 1;
+  padding: 16px;
+  width: 100%;
+}

@@ -24,7 +24,27 @@ Room.prototype.disconnect = function () {
 
 }
 
-Room.prototype.get = async function (user) {
+Room.prototype.get = async function (roomID) {
+
+  if (roomID== null) {
+    throw 'roomID is null!';
+  }
+
+  await this.mongo.connect();
+
+  const c = this.mongo.db(options.mongoSession.database).collection('rooms')
+
+  return new Promise((resolve, reject) => {
+    c.find({'id': roomID}).toArray((err, docs) => {
+      if (err != null) {
+        reject(err);
+      }
+      resolve(docs);
+    });
+  });
+}
+
+Room.prototype.getAll = async function (user) {
 
   if (user.id == null) {
     throw 'userID is null!';
@@ -32,8 +52,7 @@ Room.prototype.get = async function (user) {
 
   await this.mongo.connect();
 
-  const db = this.mongo.db(options.mongoSession.database);
-  const c = db.collection('rooms');
+  const c = this.mongo.db(options.mongoSession.database).collection('rooms')
 
   return new Promise((resolve, reject) => {
     c.find({'creator.id': user.id}).toArray((err, docs) => {
@@ -49,8 +68,7 @@ Room.prototype.create = async function (room, user) {
 
   await this.mongo.connect();
 
-  const db = this.mongo.db(options.mongoSession.database);
-  const c = db.collection('rooms');
+  const c = this.mongo.db(options.mongoSession.database).collection('rooms')
 
   const participant = {
     id: user.id,
@@ -61,18 +79,16 @@ Room.prototype.create = async function (room, user) {
     picture: user.picture,
   };
 
-  return c.insertOne(
-    {
-      allSongs: [],
-      activeSongs: [],
-      creator: participant,
-      id: uuidv4(),
-      invites: [],
-      isDeleted: false,
-      name: room.name,
-      onlineParticipants: [],
-    },
-  );
+  return c.insertOne({
+    allSongs: [],
+    activeSongs: [],
+    creator: participant,
+    id: uuidv4(),
+    invites: [],
+    isDeleted: false,
+    name: room.name,
+    onlineParticipants: [],
+  });
 };
 
 module.exports = Room;

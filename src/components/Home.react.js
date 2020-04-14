@@ -1,6 +1,7 @@
 import AddRoomModal from './room/AddRoomModal.react'
 import Auth from '../utils/Auth'
 import Avatar from './user/Avatar.react'
+import Navbar from './Navbar.react'
 import React from 'react';
 
 import graphql from 'babel-plugin-relay/macro';
@@ -10,7 +11,7 @@ import useAuthLogoutListener from '../utils/useAuthLogoutListener'
 
 import './Home.css';
 
-const {useState} = React;
+const {useCallback, useState} = React;
 
 const query = graphql`
   query HomeQuery { 
@@ -40,30 +41,17 @@ function Home(props) {
 
   const addRoomHandler = (turnOn) => 
     () => {setModalOn(turnOn === true ? 'addRoom' : null)};
-  const logoutHandler = () => {
-    Auth.logout();
-    history.push({pathname: "/login", state: {isLogout: true}});
-  };
+  const roomHandler = (roomID) => () => {
+    history.push({pathname: "/room", search: `?id=${roomID}`});
+  }
 
   useAuthLogoutListener();
   return (
     <div className="home">
-      <div className="homeTop">
-        <div style={{cursor: 'pointer'}}>Home</div>
-        <div className="homeTitle">
-          {`Hello ${user.givenName}, what would you like to do?`}
-        </div>
-        <div className="homeAvatar">
-          <Avatar title={user.givenName} url={user.picture} />
-          <div className="homeAvatarDropDown">
-            <div
-              className="homeButton homeDropDownButton"
-              onClick={logoutHandler}>
-              Logout
-            </div>
-          </div>
-        </div>
-      </div>
+      <Navbar
+        title={`Hello ${user.givenName}, what would you like to do?`}
+        user={user}
+      />
       {error != null && <div className="homeError">{error}</div>}
       <div
         className="homeButton homeCreateButton"
@@ -72,8 +60,11 @@ function Home(props) {
       </div>
       <div>
         <div>My Rooms</div>
-        {rooms.map(room =>
-          <div key={room.id} className="homeRoomContainer">
+        {rooms && rooms.map(room =>
+          <div
+            key={room.id}
+            className="homeRoomContainer"
+            onClick={roomHandler(room.id)}>
             <Avatar title={room.creator.givenName} url={room.creator.picture} />
             <div>{room.name}</div>
             <div></div>

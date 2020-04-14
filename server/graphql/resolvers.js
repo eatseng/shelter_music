@@ -2,14 +2,24 @@ const RoomModel = require('../models/room')
 
 
 module.exports = (res) => {
-	return {
-    rooms: async () => {
+  return {
+    room: async ({id}) => {
 
       const Room = new RoomModel();
-      const result = await Room.get(res.locals.user);
+      const [result] = await Room.get(id);
       Room.disconnect();
 
       return result;
+
+    },
+
+    rooms: async () => {
+
+      const Room = new RoomModel();
+      const results = await Room.getAll(res.locals.user);
+      Room.disconnect();
+
+      return results;
 
     },
 
@@ -18,13 +28,15 @@ module.exports = (res) => {
       let error = null;
       
       try {
+
         const Room = new RoomModel();
         const result = await Room.create({name: input.name}, res.locals.user);
         Room.disconnect();
-        console.log(result)
-        console.log(result.toJSON())
+
       } catch (e) {
+        
         error = e.message
+      
       }
 
       return {
@@ -42,5 +54,5 @@ module.exports = (res) => {
       };
 
     },
-	};
+  };
 };

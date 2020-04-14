@@ -1,0 +1,37 @@
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.navbarAvatar:hover .navbarAvatarDropDown {
+  display: flex;
+  position: absolute;
+}
+
+.navbarButton {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+}
+
+.navbarButton:focus,
+.navbarButton:hover {
+  background-color: #bfbfbf;
+}
+
+
+.navbarAvatarDropDown {
+  display: none;
+}
+
+.navbarDropDownButton {
+  border: 1px solid lightgray;
+  height: 40px;
+  width: 60px;
+}
+
+.navbarTitle {
+  font-size: 24px;
+}

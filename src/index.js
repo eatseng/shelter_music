@@ -1,6 +1,5 @@
 import Auth from './utils/Auth';
 import Home from './components/Home.react';
-import SignIn from './components/sign_in/SignIn.react';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {RelayEnvironmentProvider} from 'react-relay/hooks';
@@ -11,6 +10,8 @@ import {
   Route,
 } from "react-router-dom";
 import RelayEnvironment from './relay/RelayEnvironment';
+import Room from './components/room/Room.react';
+import SignIn from './components/sign_in/SignIn.react';
 import * as serviceWorker from './serviceWorker';
 
 import './index.css';
@@ -22,6 +23,16 @@ function homeLoader () {
     <RelayEnvironmentProvider environment={RelayEnvironment}>
       <Suspense fallback={<div className="signIn">Loading...</div>}>
         <Home />
+      </Suspense>
+    </RelayEnvironmentProvider>
+  );
+}
+
+function roomLoader () {
+  return (
+    <RelayEnvironmentProvider environment={RelayEnvironment}>
+      <Suspense fallback={<div className="signIn">Loading...</div>}>
+        <Room />
       </Suspense>
     </RelayEnvironmentProvider>
   );
@@ -62,9 +73,9 @@ ReactDOM.render(
         <PrivateRoute exact path="/">
           {homeLoader}
         </PrivateRoute>
-        <Route exact path="/log">
-          {signInLoader}
-        </Route>
+        <PrivateRoute exact path="/room">
+          {roomLoader}
+        </PrivateRoute>
         <Route exact path="/login">
           {signInLoader}
         </Route>

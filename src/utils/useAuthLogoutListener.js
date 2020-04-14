@@ -9,10 +9,11 @@ const useAuthLogoutListener = () => {
   const history = useHistory();
 
   useEffect(() => {
+    
     const failureCallback = ({error}) => {
-      console.log('somefailure', error)
       history.push({pathname: "/login", state: {isLogout: false}});
     };
+
     Auth.registerFailure('useAuthLogoutFailure', failureCallback);
 
     return () => {

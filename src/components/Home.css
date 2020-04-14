@@ -6,21 +6,6 @@
   justify-content: space-around;
 }
 
-.homeAvatar:hover .homeAvatarDropDown {
-    display: flex;
-    position: absolute;
-  }
-
-.homeAvatarDropDown {
-  display: none;
-}
-
-.homeDropDownButton {
-  border: 1px solid lightgray;
-  height: 40px;
-  width: 60px;
-}
-
 .homeButton {
   align-items: center;
   cursor: pointer;
@@ -48,18 +33,10 @@
   align-items: center;
   background-color: #eda1a1;
   box-sizing: border-box;
+  cursor: pointer;
   display: flex;
   height: 60px;
   justify-content: space-around;
   margin: 4px 0px 4px 0px;
   width: 520px;
-}
-
-.homeTitle {
-  font-size: 24px;
-}
-
-.homeTop {
-  display: flex;
-  justify-content: space-around;
 }

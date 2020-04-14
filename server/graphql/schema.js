@@ -22,10 +22,11 @@ module.exports = buildSchema(`
   }
 
   type Mutation {
-  	upsertRoom(input: UpsertRoomInput!): RoomMutationResponse
+    upsertRoom(input: UpsertRoomInput!): RoomMutationResponse
   }
 
   type Query {
+    room(id: String!): Room
     rooms: [Room!]
     user: User
   }

@@ -12,7 +12,6 @@ function AddRoomModal(props) {
   const environment = useRelayEnvironment();
   const [room, setRoom] = useState({name: ''});
 
-  const userInputHandler = (e) => setRoom({name: e.target.value});
   const createHandler = useCallback(() => {
     props.turnOff();
     commit(
@@ -28,6 +27,7 @@ function AddRoomModal(props) {
     );
     setRoom({name: ''});
   }, [environment, room]);
+  const userInputHandler = (e) => setRoom({name: e.target.value});
 
   useEffect(() => {
     const keypressHandler = (e) => {
