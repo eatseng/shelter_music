@@ -10,6 +10,10 @@ import './Navbar.css';
 function Navbar(props) {
   const history = useHistory();  
 
+  const homeHandler = () => {
+    history.push({pathname: "/"});
+  }
+
   const logoutHandler = () => {
     Auth.logout();
     history.push({pathname: "/login", state: {isLogout: true}});
@@ -18,7 +22,7 @@ function Navbar(props) {
   useAuthLogoutListener();
   return (
     <div className="navbar">
-      <div style={{cursor: 'pointer'}}>Home</div>
+      <div className="navbarHome" onClick={homeHandler}>Home</div>
       <div className="navbarTitle">
         {props.title}
       </div>

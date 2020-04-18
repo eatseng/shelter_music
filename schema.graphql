@@ -1,4 +1,14 @@
+input CreateInviteInput {
+  invitees: [UserInput!]
+  room: RoomInput!
+}
+
+type InviteMutationResponse {
+  error: String
+}
+
 type Mutation {
+  createInvite(input: CreateInviteInput!): InviteMutationResponse
   upsertRoom(input: UpsertRoomInput!): RoomMutationResponse
 }
 
@@ -6,11 +16,18 @@ type Query {
   room(id: String!): Room
   rooms: [Room!]
   user: User
+  users: [User!]
 }
 
 type Room {
   creator: User
   id: String
+  name: String!
+}
+
+input RoomInput {
+  creator: UserInput!
+  id: String!
   name: String!
 }
 
@@ -25,6 +42,15 @@ input UpsertRoomInput {
 
 type User {
   givenName: String!
+  id: String!
+  name: String!
+  picture: String!
+}
+
+input UserInput {
+  givenName: String!
+  id: String
+  name: String
   picture: String!
 }
 

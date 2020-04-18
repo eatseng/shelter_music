@@ -1,0 +1,49 @@
+.addRoomContainer {
+  align-items: center;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  height: 70%;
+  justify-content: space-around;
+  width: 40%;
+  z-index: 10;
+}
+
+.addRoomCreateButton {
+  align-items: center;
+  background-color: #DBFBDA;
+  border: 1px solid lightgray;
+  cursor: pointer;
+  display: flex;
+  height: 60px;
+  justify-content: center;
+  width: 66%;
+}
+
+.addRoomCreateButton:focus,
+.addRoomCreateButton:hover {
+  background-color: #bff7bc;
+}
+
+.addRoomInput {
+  border-top-style: hidden;
+  border-right-style: hidden;
+  border-left-style: hidden;
+  border-bottom-style: groove;
+  font-size: 14px;
+  padding: 0px 16px 0px 16px;
+  width: 80%;
+}
+
+.addRoomInput:focus {
+  outline: none;
+}
+
+.addRoomTitle {
+  align-items: center;
+  display: flex;
+  border-bottom: 1px solid black;
+  justify-content: center;
+  padding: 0px 0px 16px 0px;
+  width: 90%;
+}

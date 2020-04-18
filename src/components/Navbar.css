@@ -9,6 +9,10 @@
   position: absolute;
 }
 
+.navbarAvatarDropDown {
+  display: none;
+}
+
 .navbarButton {
   align-items: center;
   cursor: pointer;
@@ -21,15 +25,14 @@
   background-color: #bfbfbf;
 }
 
-
-.navbarAvatarDropDown {
-  display: none;
-}
-
 .navbarDropDownButton {
   border: 1px solid lightgray;
   height: 40px;
   width: 60px;
+}
+
+.navbarHome {
+  cursor: pointer;
 }
 
 .navbarTitle {

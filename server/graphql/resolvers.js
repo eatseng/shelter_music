@@ -1,8 +1,39 @@
-const RoomModel = require('../models/room')
+const InviteModel = require('../models/invite');
+const RoomModel = require('../models/room');
+const UserModel = require('../models/user');
 
+const userSnakeToCamelCase = require('../utils/userSnakeToCamelCase');
 
 module.exports = (res) => {
   return {
+    createInvite: async ({input}) => {
+
+      let error = null;
+
+      try {
+        
+        const Invite = new InviteModel();
+        const invites = await Invite.createMany(
+          userSnakeToCamelCase(res.locals.user),
+          input.invitees,
+          input.room,
+        );
+        Invite.disconnect()
+
+        const User = new UserModel();
+        await Promise.all(invites.map(invite => User.upsertInvite(invite)));
+        User.disconnect();
+
+      } catch (e) {
+        
+        error = e.message;
+
+      }
+      
+      return {error};
+
+    },
+
     room: async ({id}) => {
 
       const Room = new RoomModel();
@@ -35,7 +66,7 @@ module.exports = (res) => {
 
       } catch (e) {
         
-        error = e.message
+        error = e.message;
       
       }
 
@@ -52,6 +83,16 @@ module.exports = (res) => {
         givenName: res.locals.user.given_name,
         picture: res.locals.user.picture,
       };
+
+    },
+
+    users: async () => {
+
+      const User = new UserModel();
+      const results = await User.getAll();
+      User.disconnect();
+      
+      return results;
 
     },
   };

@@ -1,22 +1,4 @@
-.addRoomModal {
-  align-items: center;
-	display: none;
-  height: 100%;
-	justify-content: space-around;
-  position: absolute;
-  width: 100%;
-}
-
-.addRoomModalScreen {
-  background-color: lightgray;
-  height: 100%;
-  opacity: 0.5;
-  position: absolute;
-  width: 100%;
-  z-index: 1;
-}
-
-.addRoomContainer {
+.addMusicContainer {
   align-items: center;
   background-color: white;
   display: flex;
@@ -27,7 +9,7 @@
   z-index: 10;
 }
 
-.addRoomCreateButton {
+.addMusicCreateButton {
   align-items: center;
   background-color: #DBFBDA;
   border: 1px solid lightgray;
@@ -38,12 +20,12 @@
   width: 66%;
 }
 
-.addRoomCreateButton:focus,
-.addRoomCreateButton:hover {
+.addMusicCreateButton:focus,
+.addMusicCreateButton:hover {
   background-color: #bff7bc;
 }
 
-.addRoomInput {
+.addMusicInput {
   border-top-style: hidden;
   border-right-style: hidden;
   border-left-style: hidden;
@@ -53,11 +35,11 @@
   width: 80%;
 }
 
-.addRoomInput:focus {
+.addMusicInput:focus {
   outline: none;
 }
 
-.addRoomTitle {
+.addMusicTitle {
   align-items: center;
   display: flex;
   border-bottom: 1px solid black;

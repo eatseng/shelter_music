@@ -39,3 +39,7 @@
   padding: 16px;
   width: 100%;
 }
+
+.roomPlayer {
+  background-color: lightgray;
+}

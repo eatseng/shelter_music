@@ -17,7 +17,10 @@ const isValidSession = module.exports = () =>
       const user = await User.get(req.session.userID);
       User.disconnect();  
 
-      if (user.id !== req.session.userID) {
+      if (
+        user.id !== req.session.userID ||
+        user.password !== req.session.password
+      ) {
         req.session.destroy((error) => {
           if (error != null) {
             throw 'Error erasing session!'

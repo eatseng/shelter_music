@@ -1,6 +1,7 @@
-import AddRoomModal from './room/AddRoomModal.react'
+import AddRoom from './room/AddRoom.react'
 import Auth from '../utils/Auth'
 import Avatar from './user/Avatar.react'
+import Modal from './Modal.react'
 import Navbar from './Navbar.react'
 import React from 'react';
 
@@ -39,7 +40,7 @@ function Home(props) {
   const [error, setError] = useState('');
   const [modalOn, setModalOn] = useState(null);
 
-  const addRoomHandler = (turnOn) => 
+  const addRoomModalHandler = (turnOn) => 
     () => {setModalOn(turnOn === true ? 'addRoom' : null)};
   const roomHandler = (roomID) => () => {
     history.push({pathname: "/room", search: `?id=${roomID}`});
@@ -55,7 +56,7 @@ function Home(props) {
       {error != null && <div className="homeError">{error}</div>}
       <div
         className="homeButton homeCreateButton"
-        onClick={addRoomHandler(true)}>
+        onClick={addRoomModalHandler(true)}>
         {`+ New Music Room`}
       </div>
       <div>
@@ -71,11 +72,16 @@ function Home(props) {
           </div>
         )}
       </div>
-      <AddRoomModal
-        modalOn={modalOn === 'addRoom'}
-        onError={setError}
-        turnOff={addRoomHandler(false)}
-      />
+      {modalOn === 'addRoom' && 
+        <Modal
+          isModalOn={modalOn === 'addRoom'}
+          turnOff={addRoomModalHandler(false)}>
+          <AddRoom
+            onError={setError}
+            turnOff={addRoomModalHandler(false)}
+          />
+        </Modal>
+      }
     </div>
   );
 }
