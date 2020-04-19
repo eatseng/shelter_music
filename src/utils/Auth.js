@@ -10,12 +10,21 @@ class Auth {
     const signinChanged = (val) => this.isGoogleAuthenticated = val;
 
     window['googleSDKLoaded'] = () => {
-      window['gapi'].load('auth2', () => {
+      window['gapi'].load('client:auth2', () => {
         this.auth2 = window['gapi'].auth2.init({
-          client_id: process.env.REACT_APP_GOOGLE_SIGN_IN_CLIENT_ID,
+          clientId: process.env.REACT_APP_GOOGLE_SIGN_IN_CLIENT_ID,
           cookiepolicy: 'single_host_origin',
           scope: 'profile email'
         });
+
+        window['gapi'].client.init({
+          apiKey: process.env.REACT_APP_GOOGLE_SIGN_IN_API_KEY,
+          clientId: process.env.REACT_APP_GOOGLE_SIGN_IN_CLIENT_ID,
+          'discoveryDocs': [
+            "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"
+          ],
+          'scope': "https://www.googleapis.com/auth/youtube.force-ssl",
+        })
 
         // Listen for sign-in state changes.
         this.auth2.isSignedIn.listen(signinChanged);
@@ -40,7 +49,8 @@ class Auth {
         
         const script = d.createElement(element);
         script.id = id;
-        script.src = "https://apis.google.com/js/platform.js?onload=googleSDKLoaded";
+        script.src = "https://apis.google.com/js/api.js?onload=googleSDKLoaded";
+        // script.src = "https://apis.google.com/js/platform.js?onload=googleSDKLoaded";
         fjs.parentNode.insertBefore(script, fjs);
       }(document, 'script', 'google-jssdk'));
     }
@@ -55,6 +65,13 @@ class Auth {
         onFailure,
       );
     }
+  }
+
+  authenticateYoutube (onSuccess = () => {}, onFailure = () => {}) {
+    const googleUser = this.auth2.currentUser.get();
+    return googleUser.grant(
+      {scope: "https://www.googleapis.com/auth/youtube.force-ssl"},
+    );
   }
 
   _authenticateRequest (idToken, onSuccess, onFailure) {

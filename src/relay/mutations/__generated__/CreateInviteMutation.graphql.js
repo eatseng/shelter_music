@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash c516bc659c99cc78aa6684adecfa8d00
+ * @relayHash ac890a9b26bb16093134762c8e3066e4
  */
 
 /* eslint-disable */
@@ -71,7 +71,7 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "InviteMutationResponse",
+    "concreteType": "InviteMutationPayload",
     "plural": false,
     "selections": [
       {

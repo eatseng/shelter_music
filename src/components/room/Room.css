@@ -29,6 +29,7 @@
 
 .roomContainer {
   display: flex;
+  overflow-y: scroll;
   width: 92%;
 }
 
@@ -42,4 +43,6 @@
 
 .roomPlayer {
   background-color: lightgray;
+  height: 390px;
+  width: 640px;
 }

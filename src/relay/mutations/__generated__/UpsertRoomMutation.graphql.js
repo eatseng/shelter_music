@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 57999de114033f315361f1dc47bf2871
+ * @relayHash 06d116216c278ae9f65b7ff79fee0c14
  */
 
 /* eslint-disable */
@@ -19,7 +19,12 @@ export type UpsertRoomMutationResponse = {|
   +upsert: ?{|
     +error: ?string,
     +room: ?{|
-      +name: string
+      +creator: ?{|
+        +givenName: string,
+        +picture: string,
+      |},
+      +id: ?string,
+      +name: string,
     |},
   |}
 |};
@@ -37,6 +42,11 @@ mutation UpsertRoomMutation(
   upsert: upsertRoom(input: $input) {
     error
     room {
+      creator {
+        givenName
+        picture
+      }
+      id
       name
     }
   }
@@ -65,7 +75,7 @@ v1 = [
         "variableName": "input"
       }
     ],
-    "concreteType": "RoomMutationResponse",
+    "concreteType": "RoomMutationPayload",
     "plural": false,
     "selections": [
       {
@@ -84,6 +94,38 @@ v1 = [
         "concreteType": "Room",
         "plural": false,
         "selections": [
+          {
+            "kind": "LinkedField",
+            "alias": null,
+            "name": "creator",
+            "storageKey": null,
+            "args": null,
+            "concreteType": "User",
+            "plural": false,
+            "selections": [
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "name": "givenName",
+                "args": null,
+                "storageKey": null
+              },
+              {
+                "kind": "ScalarField",
+                "alias": null,
+                "name": "picture",
+                "args": null,
+                "storageKey": null
+              }
+            ]
+          },
+          {
+            "kind": "ScalarField",
+            "alias": null,
+            "name": "id",
+            "args": null,
+            "storageKey": null
+          },
           {
             "kind": "ScalarField",
             "alias": null,
@@ -116,12 +158,12 @@ return {
     "operationKind": "mutation",
     "name": "UpsertRoomMutation",
     "id": null,
-    "text": "mutation UpsertRoomMutation(\n  $input: UpsertRoomInput!\n) {\n  upsert: upsertRoom(input: $input) {\n    error\n    room {\n      name\n    }\n  }\n}\n",
+    "text": "mutation UpsertRoomMutation(\n  $input: UpsertRoomInput!\n) {\n  upsert: upsertRoom(input: $input) {\n    error\n    room {\n      creator {\n        givenName\n        picture\n      }\n      id\n      name\n    }\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'a9444b61d25e809fec255b824f4459e4';
+(node/*: any*/).hash = '7e3dad46447d6d2d08e93d3a69b08d56';
 
 module.exports = node;

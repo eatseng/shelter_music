@@ -6,9 +6,35 @@ const userSnakeToCamelCase = require('../utils/userSnakeToCamelCase');
 
 module.exports = (res) => {
   return {
+    addRoomVideo: async ({input}) => {
+
+      let error;
+
+      try {
+
+        const Room = new RoomModel();
+        const videos = await Room.addVideo(
+          input.room,
+          userSnakeToCamelCase(res.locals.user),
+          input.videos,
+        );
+        Room.disconnect();
+
+        return {error, videos};
+
+      } catch (e) {
+        
+        error = e.message;
+
+      }
+
+      return {error};
+
+    },
+
     createInvite: async ({input}) => {
 
-      let error = null;
+      let error;
 
       try {
         
@@ -34,23 +60,34 @@ module.exports = (res) => {
 
     },
 
-    room: async ({id}) => {
+    home: async () => {
 
       const Room = new RoomModel();
-      const [result] = await Room.get(id);
+      const rooms = await Room.getAll(res.locals.user);
       Room.disconnect();
-
-      return result;
+      
+      return {
+        id: 'home_001',
+        rooms: {
+          edges: rooms.map(room => { return {cursor: room.id, node: room}}),
+        },
+      };
 
     },
 
-    rooms: async () => {
+    room: async ({id}) => {
 
       const Room = new RoomModel();
-      const results = await Room.getAll(res.locals.user);
+      const [room] = await Room.get(id);
       Room.disconnect();
 
-      return results;
+      return {
+        ...room,
+        videos: {
+          edges: room.videos
+            .map(video => { return {cursor: video.id, node: video}}),
+        },
+      };
 
     },
 
@@ -61,8 +98,10 @@ module.exports = (res) => {
       try {
 
         const Room = new RoomModel();
-        const result = await Room.create({name: input.name}, res.locals.user);
+        const {ops: [room]} = await Room.create({name: input.name}, res.locals.user);
         Room.disconnect();
+        
+        return {error, room};
 
       } catch (e) {
         

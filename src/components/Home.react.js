@@ -1,5 +1,4 @@
 import AddRoom from './room/AddRoom.react'
-import Auth from '../utils/Auth'
 import Avatar from './user/Avatar.react'
 import Modal from './Modal.react'
 import Navbar from './Navbar.react'
@@ -12,19 +11,29 @@ import useAuthLogoutListener from '../utils/useAuthLogoutListener'
 
 import './Home.css';
 
-const {useCallback, useState} = React;
+const {useState} = React;
 
 const query = graphql`
   query HomeQuery { 
-    rooms {
-      creator {
-        ... on User {
-          givenName
-          picture
+    home {
+      ... on Home {
+        rooms(
+          first: 2147483647, # max GraphQLInt
+        ) @connection(key: "Home_rooms") {
+          edges {
+            node {
+              creator {
+                ... on User {
+                  givenName
+                  picture
+                }
+              }
+              id
+              name
+            }
+          }
         }
       }
-      id
-      name
     }
     user {
       givenName
@@ -35,7 +44,7 @@ const query = graphql`
 
 function Home(props) {
   const history = useHistory();  
-  const {rooms, user} = useLazyLoadQuery(query, {});
+  const {home: {rooms}, user} = useLazyLoadQuery(query, {});
 
   const [error, setError] = useState('');
   const [modalOn, setModalOn] = useState(null);
@@ -61,16 +70,23 @@ function Home(props) {
       </div>
       <div>
         <div>My Rooms</div>
-        {rooms && rooms.map(room =>
-          <div
-            key={room.id}
-            className="homeRoomContainer"
-            onClick={roomHandler(room.id)}>
-            <Avatar title={room.creator.givenName} url={room.creator.picture} />
-            <div>{room.name}</div>
-            <div></div>
-          </div>
-        )}
+        {
+          (rooms?.edges || [])
+            .map(edge => edge.node)
+            .map(room =>
+              <div
+                key={room.id}
+                className="homeRoomContainer"
+                onClick={roomHandler(room.id)}>
+                <Avatar
+                  title={room?.creator?.givenName}
+                  url={room?.creator?.picture}
+                />
+                <div>{room.name}</div>
+                <div></div>
+              </div>
+            )
+        }
       </div>
       {modalOn === 'addRoom' && 
         <Modal

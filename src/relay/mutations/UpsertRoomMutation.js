@@ -1,5 +1,6 @@
-import graphql from 'babel-plugin-relay/macro';
+import {ConnectionHandler} from 'relay-runtime';
 import {commitMutation} from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
 
 const query = graphql`
   mutation UpsertRoomMutation($input: UpsertRoomInput!) {
@@ -7,6 +8,13 @@ const query = graphql`
       error
       room {
         ... on Room {
+          creator {
+            ... on User {
+              givenName
+              picture
+            }
+          }
+          id
           name
         }
       }
@@ -26,6 +34,21 @@ function UpsertRoomMutation (
       variables: {input},
       onCompleted: callback.onSuccess,
       onError: callback.onError,
+      updater: (store) => {
+        const connection = ConnectionHandler.getConnection(
+          store.get('home_001'),
+          'Home_rooms'
+        );
+
+        const newRoomEdge = ConnectionHandler.createEdge(
+          store,
+          connection,
+          store.getRootField('upsertRoom').getLinkedRecord('room'),
+          'RoomEdge'
+        )
+        
+        ConnectionHandler.insertEdgeAfter(connection, newRoomEdge)
+      },
     }
   );
 }

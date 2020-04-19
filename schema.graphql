@@ -1,20 +1,47 @@
+input AddRoomVideoInput {
+  videos: [VideoInput!]
+  room: RoomInput
+}
+
+type AddRoomVideoMutationPayload {
+  error: String
+  videos: [Video!]
+}
+
 input CreateInviteInput {
   invitees: [UserInput!]
   room: RoomInput!
 }
 
-type InviteMutationResponse {
+type Home implements Node {
+  id: ID!
+  rooms(after: String, first: Int, before: String, last: Int): RoomConnection
+}
+
+type InviteMutationPayload {
   error: String
 }
 
 type Mutation {
-  createInvite(input: CreateInviteInput!): InviteMutationResponse
-  upsertRoom(input: UpsertRoomInput!): RoomMutationResponse
+  addRoomVideo(input: AddRoomVideoInput!): AddRoomVideoMutationPayload
+  createInvite(input: CreateInviteInput!): InviteMutationPayload
+  upsertRoom(input: UpsertRoomInput!): RoomMutationPayload
+}
+
+interface Node {
+  id: ID!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
 }
 
 type Query {
+  home: Home
   room(id: String!): Room
-  rooms: [Room!]
   user: User
   users: [User!]
 }
@@ -23,6 +50,17 @@ type Room {
   creator: User
   id: String
   name: String!
+  videos(after: String, first: Int, before: String, last: Int): VideoConnection
+}
+
+type RoomConnection {
+  edges: [RoomEdge]
+  pageInfo: PageInfo
+}
+
+type RoomEdge {
+  cursor: String!
+  node: Room
 }
 
 input RoomInput {
@@ -31,7 +69,7 @@ input RoomInput {
   name: String!
 }
 
-type RoomMutationResponse {
+type RoomMutationPayload {
   error: String
   room: Room
 }
@@ -52,5 +90,56 @@ input UserInput {
   id: String
   name: String
   picture: String!
+}
+
+type Video {
+  addedBy: User!
+  description: String
+  id: String!
+  publishedAt: String
+  thumbnails: VideoThumbnails!
+  title: String!
+}
+
+type VideoConnection {
+  edges: [VideoEdge]
+  pageInfo: PageInfo
+}
+
+type VideoEdge {
+  cursor: String!
+  node: Video
+}
+
+input VideoInput {
+  description: String
+  id: String!
+  publishedAt: String
+  thumbnails: VideoThumbnailsInput!
+  title: String!
+}
+
+type VideoThumbnail {
+  height: Int!
+  width: Int!
+  url: String!
+}
+
+input VideoThumbnailInput {
+  height: Int!
+  width: Int!
+  url: String!
+}
+
+type VideoThumbnails {
+  default: VideoThumbnail
+  medium: VideoThumbnail
+  high: VideoThumbnail
+}
+
+input VideoThumbnailsInput {
+  default: VideoThumbnailInput
+  medium: VideoThumbnailInput
+  high: VideoThumbnailInput
 }
 

@@ -18,6 +18,36 @@ function Room(params) {
 
 };
 
+Room.prototype.addVideo = async function (room, user, videos) {
+  if (videos.length === 0) {
+    throw {message: 'Video list is empty!'};
+  }
+
+  await this.mongo.connect();
+
+  const c = this.mongo.db(options.mongoSession.database).collection('rooms');
+
+  const writeQuery = videos.map(video => {
+    return {
+      updateOne: {
+        filter: {id: room.id},
+        update: {$push: {videos: {...video, addedBy: user}}},
+      },
+    };
+  });
+
+  return new Promise((resolve, reject) => {
+    c.bulkWrite(writeQuery, {ordered: true, w: 0}, (err, r) => {
+      if (err != null) {
+        reject(err);
+      } else {
+        resolve(videos.map(video => {return {...video, addedBy: user}}));
+      }
+    });
+  });
+}
+
+
 Room.prototype.disconnect = function () {
 
   this.mongo.close();
@@ -27,12 +57,12 @@ Room.prototype.disconnect = function () {
 Room.prototype.get = async function (roomID) {
 
   if (roomID== null) {
-    throw 'roomID is null!';
+    throw {message: 'roomID is null!'};
   }
 
   await this.mongo.connect();
 
-  const c = this.mongo.db(options.mongoSession.database).collection('rooms')
+  const c = this.mongo.db(options.mongoSession.database).collection('rooms');
 
   return new Promise((resolve, reject) => {
     c.find({'id': roomID}).toArray((err, docs) => {
@@ -47,12 +77,12 @@ Room.prototype.get = async function (roomID) {
 Room.prototype.getAll = async function (user) {
 
   if (user.id == null) {
-    throw 'userID is null!';
+    throw {message: 'userID is null!'};
   }
 
   await this.mongo.connect();
 
-  const c = this.mongo.db(options.mongoSession.database).collection('rooms')
+  const c = this.mongo.db(options.mongoSession.database).collection('rooms');
 
   return new Promise((resolve, reject) => {
     c.find({'creator.id': user.id}).toArray((err, docs) => {
@@ -68,7 +98,7 @@ Room.prototype.create = async function (room, user) {
 
   await this.mongo.connect();
 
-  const c = this.mongo.db(options.mongoSession.database).collection('rooms')
+  const c = this.mongo.db(options.mongoSession.database).collection('rooms');
 
   const participant = {
     id: user.id,
@@ -80,14 +110,13 @@ Room.prototype.create = async function (room, user) {
   };
 
   return c.insertOne({
-    allSongs: [],
-    activeSongs: [],
     creator: participant,
     id: uuidv4(),
     invites: [],
     isDeleted: false,
     name: room.name,
     onlineParticipants: [],
+    videos: [],
   });
 };
 

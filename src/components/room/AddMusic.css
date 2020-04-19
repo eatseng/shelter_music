@@ -47,3 +47,8 @@
   padding: 0px 0px 16px 0px;
   width: 90%;
 }
+
+.addMusicVideos {
+  height: 50%;
+  overflow-y: scroll;
+}

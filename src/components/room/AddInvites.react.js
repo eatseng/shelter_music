@@ -1,7 +1,7 @@
-import Avatar from '../user/Avatar.react'
+import Avatar from '../user/Avatar.react';
 import React from 'react';
 import {useRelayEnvironment} from 'react-relay/hooks';
-import commit from '../../relay/mutations/CreateInviteMutation'
+import commit from '../../relay/mutations/CreateInviteMutation';
 
 import graphql from 'babel-plugin-relay/macro';
 import {useLazyLoadQuery} from 'react-relay/hooks';
@@ -45,19 +45,20 @@ function AddInvites(props) {
         invitees: Object.keys(invitees)
           .map(id => invitees[id])
           .filter(invitee => invitee),
-        room: props.room
+        room: {
+          creator: props.room.creator,
+          id: props.room.id,
+          name: props.room.name,
+        },
       },
       {
-        onSuccess: (resp) => {
-          console.log('onRelaySuccess', resp);
-          props.onError(resp.create?.error || '');
-        },
-        onError: (error) => console.log('onRelayFailure', error),
+        onSuccess: (resp) => props.onError(resp.create?.error || ''),
+        onError: (error) => props.onError('Relay transport failure'),
       },
     );
     setsearchString('');
     props.turnOff();
-  }, [environment, invitees]);
+  }, [environment, invitees, props]);
   const userInputHandler = (e) => setsearchString(e.target.value);
   
   return (
@@ -69,23 +70,25 @@ function AddInvites(props) {
         type="text"
         value={searchString.name}
       />
-      {
-        (users || [])
-          .filter(
-            user => user.name.toUpperCase().includes(searchString.toUpperCase())
-          )
-          .map(user =>
-            <div className="addInvitesRow" key={user.picture}>
-              <Avatar title={user.name} url={user.picture} />
-              <div>{user.name}</div>
-              <input
-                onChange={checkHandler(user)}
-                type="checkbox"
-                value={invitees[user.id]}
-              />
-            </div>
-          )
-      }
+      <div className="addInvitesUsers">
+        {
+          (users || [])
+            .filter(
+              user => user.name.toUpperCase().includes(searchString.toUpperCase())
+            )
+            .map(user =>
+              <div className="addInvitesRow" key={user.picture}>
+                <Avatar title={user.name} url={user.picture} />
+                <div>{user.name}</div>
+                <input
+                  onChange={checkHandler(user)}
+                  type="checkbox"
+                  value={invitees[user.id]}
+                />
+              </div>
+            )
+        }
+      </div>
       <div
         className="addInvitesCreateButton"
         onClick={createHandler}>

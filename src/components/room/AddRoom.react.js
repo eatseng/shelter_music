@@ -16,15 +16,12 @@ function AddRoom(props) {
       environment,
       room,
       {
-        onSuccess: (resp) => {
-          console.log('onRelaySuccess', resp);
-          props.onError(resp.upsertRoom.error || '');
-        },
-        onError: (error) => console.log('onRelayFailure', error),
+        onSuccess: (resp) => props.onError(resp.upsert.error || ''),
+        onError: (error) => {console.log(error);props.onError('Relay transport error')},
       },
     );
     setRoom({name: ''});
-  }, [environment, room]);
+  }, [environment, props, room]);
   const userInputHandler = (e) => setRoom({name: e.target.value});
 
   return (
