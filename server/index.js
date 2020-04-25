@@ -46,7 +46,7 @@ app.use(
 
 app.use(
   '/login',
-  cors({origin: 'http://localhost:3000'}),
+  cors({origin: `${process.env.REACT_APP_SERVER_END_POINT}:3000`}),
   verifyGoogleToken(),
 );
 
