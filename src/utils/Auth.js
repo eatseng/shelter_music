@@ -2,10 +2,9 @@ class Auth {
 
   constructor () {
     this.auth2 = null;
-    this.failure = {};
     this.isGoogleAuthenticated = false;
     this.isGoogleLoaded = false;
-    this.success = {};
+    this.subscriptions = {};
     
     const signinChanged = (val) => this.isGoogleAuthenticated = val;
 
@@ -32,10 +31,12 @@ class Auth {
         this.auth2.then(
           (auth2) => {
             this.authenticate();
-            Object.values(this.success).map(callback => callback(auth2));
+            (this.subscriptions['authLoadSuccess'] || [])
+              .map(callback => callback(auth2));
           },
           (error) => {
-            Object.values(this.failure).map(callback => callback({error}));
+            (this.subscriptions['failure'] || [])
+              .map(callback => callback({error}));
           },
         );
         this.isGoogleLoaded = true;
@@ -49,11 +50,18 @@ class Auth {
         
         const script = d.createElement(element);
         script.id = id;
-        script.src = "https://apis.google.com/js/api.js?onload=googleSDKLoaded";
-        // script.src = "https://apis.google.com/js/platform.js?onload=googleSDKLoaded";
+        script.src =
+          "https://apis.google.com/js/api.js?onload=googleSDKLoaded";
         fjs.parentNode.insertBefore(script, fjs);
       }(document, 'script', 'google-jssdk'));
     }
+  }
+
+  addEventListener (eventName, callback) {
+    if (eventName in this.subscriptions !== true) {
+      this.subscriptions[eventName] = [];
+    }
+    this.subscriptions[eventName].push(callback);
   }
 
   authenticate (onSuccess = () => {}, onFailure = () => {}) {
@@ -63,6 +71,11 @@ class Auth {
         googleUser.getAuthResponse().id_token,
         onSuccess,
         onFailure,
+      );
+    } else {
+      this.subscriptions['failure'].map(
+        callback =>
+          callback({error: `Google user not signed in!`}),
       );
     }
   }
@@ -76,20 +89,22 @@ class Auth {
 
   _authenticateRequest (idToken, onSuccess, onFailure) {
     const xhr = new XMLHttpRequest();
-    xhr.open('POST', `${process.env.REACT_APP_SERVER_END_POINT}/login`);
+    xhr.open('POST', `${process.env.REACT_APP_SERVER_END_POINT}:4000/login`);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.withCredentials = true;
     xhr.onload = () => {
       this.isGoogleAuthenticated = true;
       if (xhr.status !== 200) {
-        Object.values(this.failure).map(
+        this.subscriptions['failure'].map(
           callback =>
             callback({error: `${xhr.status} Google authentication failed!`}),
         );
         this.isGoogleAuthenticated = false;
         onFailure({error: xhr.status});
       } else {
-        onSuccess()
+        onSuccess();
+        (this.subscriptions['authSuccess'] || [])
+          .map(callback => callback(this.auth2));
       }
     };
     xhr.send(`idToken=${idToken}`);
@@ -107,17 +122,19 @@ class Auth {
 
   async login() {
     await this.auth2.signIn();
-    return new Promise((resolve, reject) => this.authenticate(resolve, reject))
+    return new Promise(
+      (resolve, reject) => this.authenticate(resolve, reject),
+    );
   }
 
   logout() {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', `${process.env.REACT_APP_SERVER_END_POINT}/logout`);
+    xhr.open('GET', `${process.env.REACT_APP_SERVER_END_POINT}:4000/logout`);
     xhr.withCredentials = true;
     xhr.onload = () => {
       if (xhr.status !== 200) {
-        Object.values(this.failure).map(
-          callback => callback(`${xhr.status} Google authentication failed!`)
+        (this.subscriptions['failure'] || []).map(
+          callback => callback(`${xhr.status} Google authentication failed!`),
         );
       }
     };
@@ -125,24 +142,12 @@ class Auth {
     return this.auth2.disconnect();
   }
 
-  registerFailure(id, callback) {
-    if (id in this.failure !== true) {
-      this.failure[id] = callback;
+  removeEventListener (eventName, callback) {
+    if (eventName in this.subscriptions) {
+      this.subscriptions[eventName] =
+        this.subscriptions[eventName]
+          .filter(listener => listener !== callback);
     }
-  }
-
-  registerSuccess(id, callback) {
-    if (id in this.success !== true) {
-      this.success[id] = callback;
-    }
-  }
-
-  removeFailure(id) {
-    delete this.failure[id];
-  }
-
-  removeSuccess(id) {
-    delete this.success[id];
   }
 }
 

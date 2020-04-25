@@ -1,7 +1,7 @@
 const {buildSchema} = require("graphql");
 
 module.exports = buildSchema(`
-  input AddRoomVideoInput {
+  input AddRoomVideosInput {
     videos: [VideoInput!]
     room: RoomInput
   }
@@ -11,10 +11,29 @@ module.exports = buildSchema(`
     room: RoomInput!
   }
 
+  input CreateRoomInput {
+    name: String!
+  }
+
+  input EnableVotingInput {
+    roomID: String!
+    isEnableVoting: Boolean!
+  }
+
+  input LeaveRoomInput {
+    roomID: String!
+  }
+
   input RoomInput {
     creator: UserInput!
     id: String!
     name: String!
+  }
+
+  input UpdateRoomVideoInput {
+    video: VideoInput!
+    vote: VoteInput
+    room: RoomInput
   }
 
   input VideoThumbnailInput {
@@ -29,6 +48,11 @@ module.exports = buildSchema(`
     high: VideoThumbnailInput
   }
 
+  input VoteInput {
+    id: String
+    userID: String
+  }
+
   input UserInput {
     givenName: String!
     id: String
@@ -36,25 +60,30 @@ module.exports = buildSchema(`
     picture: String!
   }
 
-  input UpsertRoomInput {
-    name: String!
-  }
-
   input VideoInput {
     description: String
-    id: String!
+    id: String
+    isVideoPlaying: Boolean
+    isVoted: Boolean
     publishedAt: String
     thumbnails: VideoThumbnailsInput!
     title: String!
+    videoID: String!
   }
 
   interface Node {
     id: ID!
   }
 
-  type AddRoomVideoMutationPayload {
+  type AddRoomVideosMutationPayload {
     error: String
     videos: [Video!]
+  }
+
+  type EnableVotingMutationPayload {
+    error: String
+    id: String
+    isVotingEnabled: Boolean
   }
 
   type Home implements Node {
@@ -64,6 +93,10 @@ module.exports = buildSchema(`
 
   type InviteMutationPayload {
     error: String
+  }
+
+  type LeaveRoomMutationPayload {
+    isLeft: Boolean
   }
 
   type PageInfo {
@@ -76,8 +109,12 @@ module.exports = buildSchema(`
   type Room {
     creator: User
     id: String
+    isVotingEnabled: Boolean
     name: String!
-    videos(after: String, first: Int, before: String, last: Int): VideoConnection
+    onlineParticipants
+      (after: String, first: Int, before: String, last: Int): UserConnection
+    videos
+      (after: String, first: Int, before: String, last: Int): VideoConnection
   }
 
   type RoomConnection {
@@ -95,20 +132,41 @@ module.exports = buildSchema(`
     room: Room
   }
 
+  type UpdateRoomVideoMutationPayload {
+    error: String
+    video: Video
+    vote: VideoVote
+  }
+
   type User {
     givenName: String!
     id: String!
     name: String!
+    onlineTimestamp: Int
     picture: String!
+  }
+
+  type UserConnection {
+    edges: [UserEdge]
+    pageInfo: PageInfo
+  }
+
+  type UserEdge {
+    cursor: String!
+    node: User
   }
 
   type Video {
     addedBy: User!
     description: String
     id: String!
+    playAt: Int
     publishedAt: String
     thumbnails: VideoThumbnails!
     title: String!
+    videoID: String!
+    votes(after: String, first: Int, before: String, last: Int):
+      VideoVoteConnection
   }
 
   type VideoConnection {
@@ -133,10 +191,28 @@ module.exports = buildSchema(`
     high: VideoThumbnail
   }
 
+  type VideoVote {
+    id: String!
+    userID: String!
+  }
+
+  type VideoVoteConnection {
+    edges: [VideoVoteEdge]
+    pageInfo: PageInfo
+  }
+
+  type VideoVoteEdge {
+    cursor: String!
+    node: VideoVote
+  }
+
   type Mutation {
-    addRoomVideo(input: AddRoomVideoInput!): AddRoomVideoMutationPayload
+    addRoomVideos(input: AddRoomVideosInput!): AddRoomVideosMutationPayload
     createInvite(input: CreateInviteInput!): InviteMutationPayload
-    upsertRoom(input: UpsertRoomInput!): RoomMutationPayload
+    createRoom(input: CreateRoomInput!): RoomMutationPayload
+    enableVoting(input: EnableVotingInput): EnableVotingMutationPayload
+    leaveRoom(input: LeaveRoomInput): LeaveRoomMutationPayload
+    updateRoomVideo(input: UpdateRoomVideoInput!): UpdateRoomVideoMutationPayload
   }
 
   type Query {

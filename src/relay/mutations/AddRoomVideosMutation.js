@@ -3,33 +3,46 @@ import {commitMutation} from 'react-relay';
 import graphql from 'babel-plugin-relay/macro';
 
 const query = graphql`
-  mutation AddRoomVideoMutation($input: AddRoomVideoInput!) {
-    add: addRoomVideo(input: $input) {
+  mutation AddRoomVideosMutation($input: AddRoomVideosInput!) {
+    add: addRoomVideos(input: $input) {
       error
       videos {
-        addedBy {
-          ... on User {
-            givenName
-            picture
+        ... on Video {
+          addedBy {
+            ... on User {
+              givenName
+              picture
+            }
+          }
+          description
+          id
+          publishedAt
+          thumbnails {
+            default {
+              height
+              width
+              url
+            }
+          }
+          title
+          videoID
+          votes (
+            first: 2147483647, # max GraphQLInt
+          ) @connection(key: "Room_video_votes"){
+            edges {
+              node {
+                id
+                userID
+              }
+            }
           }
         }
-        description
-        id
-        publishedAt
-        thumbnails {
-          default {
-            height
-            width
-            url
-          }
-        }
-        title
       }
     }
   }
 `;
 
-function AddRoomVideoMutation (
+function AddRoomVideosMutation (
   environment,
   input,
   callback,
@@ -49,9 +62,12 @@ function AddRoomVideoMutation (
         );
 
         store
-          .getRootField('addRoomVideo')
+          .getRootField('addRoomVideos')
           .getLinkedRecords('videos')
           .forEach(newVideo => {
+            
+            newVideo.setValue(Math.floor(Date.now() / 1000), 'playAt');
+            
             const newVideoEdge = ConnectionHandler.createEdge(
               store,
               connection,
@@ -65,4 +81,4 @@ function AddRoomVideoMutation (
   );
 }
 
-export default AddRoomVideoMutation
+export default AddRoomVideosMutation

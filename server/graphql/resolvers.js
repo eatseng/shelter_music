@@ -6,14 +6,14 @@ const userSnakeToCamelCase = require('../utils/userSnakeToCamelCase');
 
 module.exports = (res) => {
   return {
-    addRoomVideo: async ({input}) => {
+    addRoomVideos: async ({input}) => {
 
       let error;
 
       try {
 
         const Room = new RoomModel();
-        const videos = await Room.addVideo(
+        const videos = await Room.addVideos(
           input.room,
           userSnakeToCamelCase(res.locals.user),
           input.videos,
@@ -60,45 +60,15 @@ module.exports = (res) => {
 
     },
 
-    home: async () => {
-
-      const Room = new RoomModel();
-      const rooms = await Room.getAll(res.locals.user);
-      Room.disconnect();
-      
-      return {
-        id: 'home_001',
-        rooms: {
-          edges: rooms.map(room => { return {cursor: room.id, node: room}}),
-        },
-      };
-
-    },
-
-    room: async ({id}) => {
-
-      const Room = new RoomModel();
-      const [room] = await Room.get(id);
-      Room.disconnect();
-
-      return {
-        ...room,
-        videos: {
-          edges: room.videos
-            .map(video => { return {cursor: video.id, node: video}}),
-        },
-      };
-
-    },
-
-    upsertRoom: async ({input}) => {
+    createRoom: async ({input}) => {
 
       let error = null;
       
       try {
 
         const Room = new RoomModel();
-        const {ops: [room]} = await Room.create({name: input.name}, res.locals.user);
+        const {ops: [room]} =
+          await Room.create({name: input.name}, res.locals.user);
         Room.disconnect();
         
         return {error, room};
@@ -109,16 +79,138 @@ module.exports = (res) => {
       
       }
 
+      return {error};
+
+    },
+
+    enableVoting: async ({input}) => {
+      console.log(input)
+      let error = null;
+      
+      try {
+
+        const Room = new RoomModel();
+        const isVotingEnabled =
+          await Room.enableVoting(input.roomID, input.isEnableVoting);
+        Room.disconnect();
+        
+        return {error, isVotingEnabled};
+
+      } catch (e) {
+        
+        error = e.message;
+      
+      }
+
+      return {error};
+    
+    },
+
+    home: async () => {
+
+      const Room = new RoomModel();
+      const rooms = await Room.getAll(res.locals.user);
+      Room.disconnect();
+      
       return {
-        error,
-        room: {name: input.name},
+        id: 'home_001',
+        rooms: {
+          edges: rooms.map(room => {
+            return {cursor: room.id, node: room};
+          }),
+        },
       };
+
+    },
+
+    leaveRoom: async ({input}) => {
+
+      let error;
+
+      try {
+
+        const Room = new RoomModel();
+        const isLeft = await Room.leaveRoom(
+          input.roomID,
+          userSnakeToCamelCase(res.locals.user),
+        );
+        Room.disconnect();
+
+        return isLeft;
+
+      } catch (e) {
+
+        error = e.message;
+
+      }
+
+      return false;
+
+    },
+
+    room: async ({id}) => {
+
+      const Room = new RoomModel();
+      const [room] = await Room.get(id, userSnakeToCamelCase(res.locals.user));
+      Room.disconnect();
+      // console.log(room);
+      return {
+        ...room,
+        onlineParticipants: {
+          edges: (room.onlineParticipants || [])
+            .filter(person => person.id != res.locals.user.id)
+            .map(person => {return {cursor: person.id, node: person}}),
+        },
+        videos: {
+          edges: room.videos
+            .map(video => {
+              return {
+                cursor: video.id,
+                node: {
+                  ...video,
+                  votes: {
+                    edges: (video.votes || []).map(vote => {
+                      return {cursor: vote.id, node: vote};
+                    }),
+                  },
+                },
+              };
+            }
+          ),
+        },
+      };
+    },
+
+    updateRoomVideo: async ({input}) => {
+
+      let error;
+
+      try {
+
+        const Room = new RoomModel();
+        const vote = await Room.updateVideo(
+          input.room,
+          userSnakeToCamelCase(res.locals.user),
+          input.video,
+        );
+        Room.disconnect();
+
+        return {error, vote};
+
+      } catch (e) {
+
+        error = e.message;
+
+      }
+
+      return {error};
 
     },
 
     user: async () => {
 
       return {
+        id: res.locals.user.id,
         givenName: res.locals.user.given_name,
         picture: res.locals.user.picture,
       };

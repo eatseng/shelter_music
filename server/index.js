@@ -28,15 +28,15 @@ app.use(session({
 
 app.use(
   '/graphql',
-  preflightCors({origin: 'http://localhost:3000'}),
-  cors({origin: 'http://localhost:3000'}),
+  preflightCors({origin: `${process.env.REACT_APP_SERVER_END_POINT}:3000`}),
+  cors({origin: `${process.env.REACT_APP_SERVER_END_POINT}:3000`}),
   isValidSession(),
   graphqlHTTP((req, res) => ({schema, rootValue: resolvers(res)})),
 );
 
 app.use(
   '/heartbeat', 
-  cors({origin: 'http://localhost:3000'}),
+  cors({origin: `${process.env.REACT_APP_SERVER_END_POINT}:3000`}),
   (req, res) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Content-Type', 'application/json');
@@ -50,7 +50,7 @@ app.use(
   verifyGoogleToken(),
 );
 
-app.use('/logout', cors({origin: 'http://localhost:3000'}), logout());
+app.use('/logout', cors({origin: `${process.env.REACT_APP_SERVER_END_POINT}:3000`}), logout());
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

@@ -41,23 +41,29 @@ function SignIn(props) {
       setAuthCnt({...authCnt, error: authCnt.error + 1});
       setAuthFailure(error);
     };
-    const successCallback = (auth2) => {
+    const successLoadCallback = (auth2) => {
       setTimeout(() => {
-        setAuthCnt({...authCnt, success: authCnt.success + 1});
         setSignedIn(auth2.isSignedIn.get());
         auth2.isSignedIn.get() === true &&
           from != null &&
           history.replace(from);
-        }, 0,
+        }, 5,
       );
     };
+    const successCallback = (auth2) => {
+        setAuthCnt({...authCnt, success: authCnt.success + 1});
+        auth2.isSignedIn.get() === true &&
+          from != null &&
+          history.replace(from);
+    };
 
-    Auth.registerFailure('SignInFailure', failureCallback);
-    Auth.registerSuccess('SignInSuccess', successCallback);
-
+    Auth.addEventListener('authLoadSuccess', successLoadCallback);
+    Auth.addEventListener('authSuccess', successCallback);
+    Auth.addEventListener('failure', failureCallback);
     return () => {
-      Auth.removeFailure('SignInFailure', failureCallback);
-      Auth.removeSuccess('SignInSuccess', successCallback);
+      Auth.removeEventListener('authLoadSuccess', successLoadCallback);
+      Auth.removeEventListener('authSuccess', successCallback);
+      Auth.removeEventListener('failure', failureCallback);
     };
   }, [authCnt, from, history]);
 

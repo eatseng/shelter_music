@@ -97,9 +97,8 @@ User.prototype.get = function (userID) {
   }
 
   return new Promise((resolve, reject) => {
-    this.mysql.query(`
-      SELECT * FROM users WHERE id = ?
-      `,
+    this.mysql.query(
+      `SELECT * FROM users WHERE id = ?`,
       userID,
       (error, results, fields) => {
         if (error != null) {
@@ -139,9 +138,8 @@ User.prototype.logout = function (userID) {
   }
 
   return new Promise((resolve, reject) => {
-    this.mysql.query(`
-      UPDATE users SET password = '' WHERE id = ?
-      `,
+    this.mysql.query(
+      `UPDATE users SET password = '' WHERE id = ?`,
       userID,
       (error, results, fields) => {
         if (error != null) {

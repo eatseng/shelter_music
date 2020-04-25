@@ -3,8 +3,8 @@ import {commitMutation} from 'react-relay';
 import graphql from 'babel-plugin-relay/macro';
 
 const query = graphql`
-  mutation UpsertRoomMutation($input: UpsertRoomInput!) {
-    upsert: upsertRoom(input: $input) {
+  mutation CreateRoomMutation($input: CreateRoomInput!) {
+    create: createRoom(input: $input) {
       error
       room {
         ... on Room {
@@ -22,7 +22,7 @@ const query = graphql`
   }
 `;
 
-function UpsertRoomMutation (
+function CreateRoomMutation (
   environment,
   input,
   callback,
@@ -43,7 +43,7 @@ function UpsertRoomMutation (
         const newRoomEdge = ConnectionHandler.createEdge(
           store,
           connection,
-          store.getRootField('upsertRoom').getLinkedRecord('room'),
+          store.getRootField('createRoom').getLinkedRecord('room'),
           'RoomEdge'
         )
         
@@ -53,4 +53,4 @@ function UpsertRoomMutation (
   );
 }
 
-export default UpsertRoomMutation
+export default CreateRoomMutation

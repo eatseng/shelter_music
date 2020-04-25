@@ -1,6 +1,8 @@
 import React from 'react';
+
+import commit from '../../relay/mutations/CreateRoomMutation'
+import {useHistory} from "react-router-dom";
 import {useRelayEnvironment} from 'react-relay/hooks';
-import commit from '../../relay/mutations/UpsertRoomMutation'
 
 import './AddRoom.css';
 
@@ -8,20 +10,26 @@ const {useCallback, useState} = React;
 
 function AddRoom(props) {
   const environment = useRelayEnvironment();
+  const history = useHistory();
+
   const [room, setRoom] = useState({name: ''});
 
   const createHandler = useCallback(() => {
-    props.turnOff();
     commit(
       environment,
       room,
       {
-        onSuccess: (resp) => props.onError(resp.upsert.error || ''),
-        onError: (error) => {console.log(error);props.onError('Relay transport error')},
+        onSuccess: (resp) => {
+          props.onError(resp.create.error || '')
+          history.push(
+            {pathname: "/room", search: `?id=${resp.create.room.id}`},
+          );
+        },
+        onError: (error) => props.onError('Relay transport error'),
       },
     );
     setRoom({name: ''});
-  }, [environment, props, room]);
+  }, [environment, history, props, room]);
   const userInputHandler = (e) => setRoom({name: e.target.value});
 
   return (

@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 06d116216c278ae9f65b7ff79fee0c14
+ * @relayHash e9f21412a826f655715929e95702ea93
  */
 
 /* eslint-disable */
@@ -9,14 +9,14 @@
 
 /*::
 import type { ConcreteRequest } from 'relay-runtime';
-export type UpsertRoomInput = {|
+export type CreateRoomInput = {|
   name: string
 |};
-export type UpsertRoomMutationVariables = {|
-  input: UpsertRoomInput
+export type CreateRoomMutationVariables = {|
+  input: CreateRoomInput
 |};
-export type UpsertRoomMutationResponse = {|
-  +upsert: ?{|
+export type CreateRoomMutationResponse = {|
+  +create: ?{|
     +error: ?string,
     +room: ?{|
       +creator: ?{|
@@ -28,18 +28,18 @@ export type UpsertRoomMutationResponse = {|
     |},
   |}
 |};
-export type UpsertRoomMutation = {|
-  variables: UpsertRoomMutationVariables,
-  response: UpsertRoomMutationResponse,
+export type CreateRoomMutation = {|
+  variables: CreateRoomMutationVariables,
+  response: CreateRoomMutationResponse,
 |};
 */
 
 
 /*
-mutation UpsertRoomMutation(
-  $input: UpsertRoomInput!
+mutation CreateRoomMutation(
+  $input: CreateRoomInput!
 ) {
-  upsert: upsertRoom(input: $input) {
+  create: createRoom(input: $input) {
     error
     room {
       creator {
@@ -58,15 +58,15 @@ var v0 = [
   {
     "kind": "LocalArgument",
     "name": "input",
-    "type": "UpsertRoomInput!",
+    "type": "CreateRoomInput!",
     "defaultValue": null
   }
 ],
 v1 = [
   {
     "kind": "LinkedField",
-    "alias": "upsert",
-    "name": "upsertRoom",
+    "alias": "create",
+    "name": "createRoom",
     "storageKey": null,
     "args": [
       {
@@ -142,7 +142,7 @@ return {
   "kind": "Request",
   "fragment": {
     "kind": "Fragment",
-    "name": "UpsertRoomMutation",
+    "name": "CreateRoomMutation",
     "type": "Mutation",
     "metadata": null,
     "argumentDefinitions": (v0/*: any*/),
@@ -150,20 +150,20 @@ return {
   },
   "operation": {
     "kind": "Operation",
-    "name": "UpsertRoomMutation",
+    "name": "CreateRoomMutation",
     "argumentDefinitions": (v0/*: any*/),
     "selections": (v1/*: any*/)
   },
   "params": {
     "operationKind": "mutation",
-    "name": "UpsertRoomMutation",
+    "name": "CreateRoomMutation",
     "id": null,
-    "text": "mutation UpsertRoomMutation(\n  $input: UpsertRoomInput!\n) {\n  upsert: upsertRoom(input: $input) {\n    error\n    room {\n      creator {\n        givenName\n        picture\n      }\n      id\n      name\n    }\n  }\n}\n",
+    "text": "mutation CreateRoomMutation(\n  $input: CreateRoomInput!\n) {\n  create: createRoom(input: $input) {\n    error\n    room {\n      creator {\n        givenName\n        picture\n      }\n      id\n      name\n    }\n  }\n}\n",
     "metadata": {}
   }
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '7e3dad46447d6d2d08e93d3a69b08d56';
+(node/*: any*/).hash = '2edfc4742ee9da0b9c289efdaf3b18ff';
 
 module.exports = node;

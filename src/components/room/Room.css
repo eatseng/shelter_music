@@ -41,6 +41,10 @@
   width: 100%;
 }
 
+.roomFriends {
+  display: flex;
+}
+
 .roomPlayer {
   background-color: lightgray;
   height: 390px;

@@ -29,3 +29,5 @@ yarn add --dev relay-compiler graphql babel-plugin-relay
 Comment out isValidSession in graphql route then get schema from the graphql endpoint
 https://www.npmjs.com/package/get-graphql-schema
 get-graphql-schema [OPTIONS] ENDPOINT_URL > schema.graphql
+
+http://blog.yatis.io/install-secure-robust-mosquitto-mqtt-broker-aws-ubuntu/

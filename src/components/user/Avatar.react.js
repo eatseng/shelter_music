@@ -5,6 +5,9 @@ import './Avatar.css';
 function Avatar(props) {
   return (
     <div className="userAvatar">
+      <div className={props.tooltip != null ? "userName" : "userNameHide"}>
+        {props.title}
+      </div>
       <img
         alt={`${props.title}`}
         className="userAvatarImage"

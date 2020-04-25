@@ -1,17 +1,19 @@
+import Auth from '../../utils/Auth';
 import Avatar from '../user/Avatar.react';
 import React from 'react';
 import {useRelayEnvironment} from 'react-relay/hooks';
 
-import commit from '../../relay/mutations/AddRoomVideoMutation'
+import commit from '../../relay/mutations/AddRoomVideosMutation'
 
 import './AddMusic.css';
 
 const {useCallback, useState} = React;
 
-const DEBOUNCE_MS = 250;
+const DEBOUNCE_MS = 300;
 
 function AddMusic(props) {
   const environment = useRelayEnvironment();
+  const [error, setError] = useState(null);
   const [videos, setVideos] = useState([]);
   const [searchString, setSearchString] = useState('');
   const [selectedVideos, setSelectedVideos] = useState([]);
@@ -35,11 +37,11 @@ function AddMusic(props) {
           .filter(video => video)
           .map(video => {
             return {
-              id: video.id.videoId,
               description: video.snippet.description,
               publishedAt: video.snippet.publishedAt,
               thumbnails: video.snippet.thumbnails,
               title: video.snippet.title,
+              videoID: video.id.videoId,
             };
           }),
         room: {
@@ -55,11 +57,12 @@ function AddMusic(props) {
     );
     setSearchString('');
     props.turnOff();
-  }, [environment, searchString, selectedVideos]);
+  }, [environment, props, selectedVideos]);
 
   const userInputHandler = (e) => {
     setSearchString(e.target.value)
     const value = e.target.value;
+    setError();
 
     clearTimeout(timeoutID);
     setTimeoutID(setTimeout(() => {
@@ -69,8 +72,12 @@ function AddMusic(props) {
         "q": value,
       })
         .then(
-          (response) => setVideos(response?.result?.items),
-          (error) => props.onError(error) 
+          (response) => {setVideos(response?.result?.items)},
+          (error) => {
+            Auth.authenticateYoutube();
+            setError(error?.result?.error?.message);
+            props.onError(error?.result?.error?.message)
+          },
         );
     }, DEBOUNCE_MS))
   };
@@ -84,6 +91,7 @@ function AddMusic(props) {
         type="text"
         value={searchString}
       />
+      {error && <div>{error}</div>}
       <div className="addMusicVideos">
         {
           (videos || [])

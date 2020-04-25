@@ -14,11 +14,10 @@ const useAuthLogoutListener = () => {
       history.push({pathname: "/login", state: {isLogout: false}});
     };
 
-    Auth.registerFailure('useAuthLogoutFailure', failureCallback);
+    Auth.addEventListener('failure', failureCallback);
 
-    return () => {
-      Auth.removeFailure('useAuthLogoutFailure', failureCallback);
-    };
+    return () => Auth.removeEventListener('failure', failureCallback);
+
   }, [history]);
 
 }

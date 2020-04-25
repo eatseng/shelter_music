@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash ce92e988945d6df2ee2311f90c359dca
+ * @relayHash 78e2d4c5f1ec73a780fe6cdf72211cb6
  */
 
 /* eslint-disable */
@@ -15,11 +15,21 @@ export type RoomQueryVariables = {|
 export type RoomQueryResponse = {|
   +room: ?{|
     +creator: ?{|
+      +id: string,
       +givenName: string,
       +picture: string,
     |},
     +id: ?string,
+    +isVotingEnabled: ?boolean,
     +name: string,
+    +onlineParticipants: ?{|
+      +edges: ?$ReadOnlyArray<?{|
+        +node: ?{|
+          +givenName: string,
+          +picture: string,
+        |}
+      |}>
+    |},
     +videos: ?{|
       +edges: ?$ReadOnlyArray<?{|
         +node: ?{|
@@ -29,6 +39,7 @@ export type RoomQueryResponse = {|
           |},
           +description: ?string,
           +id: string,
+          +playAt: ?number,
           +publishedAt: ?string,
           +thumbnails: {|
             +default: ?{|
@@ -38,12 +49,22 @@ export type RoomQueryResponse = {|
             |}
           |},
           +title: string,
+          +videoID: string,
+          +votes: ?{|
+            +edges: ?$ReadOnlyArray<?{|
+              +node: ?{|
+                +id: string,
+                +userID: string,
+              |}
+            |}>
+          |},
         |}
       |}>
     |},
   |},
   +user: ?{|
     +givenName: string,
+    +id: string,
     +picture: string,
   |},
 |};
@@ -60,11 +81,21 @@ query RoomQuery(
 ) {
   room(id: $id) {
     creator {
+      id
       givenName
       picture
     }
     id
+    isVotingEnabled
     name
+    onlineParticipants(first: 2147483647) {
+      edges {
+        node {
+          givenName
+          picture
+        }
+      }
+    }
     videos(first: 2147483647) {
       edges {
         node {
@@ -74,6 +105,7 @@ query RoomQuery(
           }
           description
           id
+          playAt
           publishedAt
           thumbnails {
             default {
@@ -83,6 +115,21 @@ query RoomQuery(
             }
           }
           title
+          videoID
+          votes(first: 2147483647) {
+            edges {
+              node {
+                id
+                userID
+                __typename
+              }
+              cursor
+            }
+            pageInfo {
+              endCursor
+              hasNextPage
+            }
+          }
           __typename
         }
         cursor
@@ -95,6 +142,7 @@ query RoomQuery(
   }
   user {
     givenName
+    id
     picture
   }
 }
@@ -116,23 +164,28 @@ v1 = [
     "variableName": "id"
   }
 ],
-v2 = [
-  {
-    "kind": "ScalarField",
-    "alias": null,
-    "name": "givenName",
-    "args": null,
-    "storageKey": null
-  },
-  {
-    "kind": "ScalarField",
-    "alias": null,
-    "name": "picture",
-    "args": null,
-    "storageKey": null
-  }
-],
+v2 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "id",
+  "args": null,
+  "storageKey": null
+},
 v3 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "givenName",
+  "args": null,
+  "storageKey": null
+},
+v4 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "picture",
+  "args": null,
+  "storageKey": null
+},
+v5 = {
   "kind": "LinkedField",
   "alias": null,
   "name": "creator",
@@ -140,30 +193,204 @@ v3 = {
   "args": null,
   "concreteType": "User",
   "plural": false,
-  "selections": (v2/*: any*/)
+  "selections": [
+    (v2/*: any*/),
+    (v3/*: any*/),
+    (v4/*: any*/)
+  ]
 },
-v4 = {
+v6 = {
   "kind": "ScalarField",
   "alias": null,
-  "name": "id",
+  "name": "isVotingEnabled",
   "args": null,
   "storageKey": null
 },
-v5 = {
+v7 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "name",
   "args": null,
   "storageKey": null
 },
-v6 = [
+v8 = [
+  {
+    "kind": "Literal",
+    "name": "first",
+    "value": 2147483647
+  }
+],
+v9 = [
+  (v3/*: any*/),
+  (v4/*: any*/)
+],
+v10 = {
+  "kind": "LinkedField",
+  "alias": null,
+  "name": "onlineParticipants",
+  "storageKey": "onlineParticipants(first:2147483647)",
+  "args": (v8/*: any*/),
+  "concreteType": "UserConnection",
+  "plural": false,
+  "selections": [
+    {
+      "kind": "LinkedField",
+      "alias": null,
+      "name": "edges",
+      "storageKey": null,
+      "args": null,
+      "concreteType": "UserEdge",
+      "plural": true,
+      "selections": [
+        {
+          "kind": "LinkedField",
+          "alias": null,
+          "name": "node",
+          "storageKey": null,
+          "args": null,
+          "concreteType": "User",
+          "plural": false,
+          "selections": (v9/*: any*/)
+        }
+      ]
+    }
+  ]
+},
+v11 = {
+  "kind": "LinkedField",
+  "alias": null,
+  "name": "addedBy",
+  "storageKey": null,
+  "args": null,
+  "concreteType": "User",
+  "plural": false,
+  "selections": (v9/*: any*/)
+},
+v12 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "description",
+  "args": null,
+  "storageKey": null
+},
+v13 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "playAt",
+  "args": null,
+  "storageKey": null
+},
+v14 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "publishedAt",
+  "args": null,
+  "storageKey": null
+},
+v15 = {
+  "kind": "LinkedField",
+  "alias": null,
+  "name": "thumbnails",
+  "storageKey": null,
+  "args": null,
+  "concreteType": "VideoThumbnails",
+  "plural": false,
+  "selections": [
+    {
+      "kind": "LinkedField",
+      "alias": null,
+      "name": "default",
+      "storageKey": null,
+      "args": null,
+      "concreteType": "VideoThumbnail",
+      "plural": false,
+      "selections": [
+        {
+          "kind": "ScalarField",
+          "alias": null,
+          "name": "height",
+          "args": null,
+          "storageKey": null
+        },
+        {
+          "kind": "ScalarField",
+          "alias": null,
+          "name": "width",
+          "args": null,
+          "storageKey": null
+        },
+        {
+          "kind": "ScalarField",
+          "alias": null,
+          "name": "url",
+          "args": null,
+          "storageKey": null
+        }
+      ]
+    }
+  ]
+},
+v16 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "title",
+  "args": null,
+  "storageKey": null
+},
+v17 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "videoID",
+  "args": null,
+  "storageKey": null
+},
+v18 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "__typename",
+  "args": null,
+  "storageKey": null
+},
+v19 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "cursor",
+  "args": null,
+  "storageKey": null
+},
+v20 = {
+  "kind": "LinkedField",
+  "alias": null,
+  "name": "pageInfo",
+  "storageKey": null,
+  "args": null,
+  "concreteType": "PageInfo",
+  "plural": false,
+  "selections": [
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "name": "endCursor",
+      "args": null,
+      "storageKey": null
+    },
+    {
+      "kind": "ScalarField",
+      "alias": null,
+      "name": "hasNextPage",
+      "args": null,
+      "storageKey": null
+    }
+  ]
+},
+v21 = [
   {
     "kind": "LinkedField",
     "alias": null,
     "name": "edges",
     "storageKey": null,
     "args": null,
-    "concreteType": "VideoEdge",
+    "concreteType": "VideoVoteEdge",
     "plural": true,
     "selections": [
       {
@@ -172,129 +399,26 @@ v6 = [
         "name": "node",
         "storageKey": null,
         "args": null,
-        "concreteType": "Video",
+        "concreteType": "VideoVote",
         "plural": false,
         "selections": [
-          {
-            "kind": "LinkedField",
-            "alias": null,
-            "name": "addedBy",
-            "storageKey": null,
-            "args": null,
-            "concreteType": "User",
-            "plural": false,
-            "selections": (v2/*: any*/)
-          },
+          (v2/*: any*/),
           {
             "kind": "ScalarField",
             "alias": null,
-            "name": "description",
+            "name": "userID",
             "args": null,
             "storageKey": null
           },
-          (v4/*: any*/),
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "name": "publishedAt",
-            "args": null,
-            "storageKey": null
-          },
-          {
-            "kind": "LinkedField",
-            "alias": null,
-            "name": "thumbnails",
-            "storageKey": null,
-            "args": null,
-            "concreteType": "VideoThumbnails",
-            "plural": false,
-            "selections": [
-              {
-                "kind": "LinkedField",
-                "alias": null,
-                "name": "default",
-                "storageKey": null,
-                "args": null,
-                "concreteType": "VideoThumbnail",
-                "plural": false,
-                "selections": [
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "name": "height",
-                    "args": null,
-                    "storageKey": null
-                  },
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "name": "width",
-                    "args": null,
-                    "storageKey": null
-                  },
-                  {
-                    "kind": "ScalarField",
-                    "alias": null,
-                    "name": "url",
-                    "args": null,
-                    "storageKey": null
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "name": "title",
-            "args": null,
-            "storageKey": null
-          },
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "name": "__typename",
-            "args": null,
-            "storageKey": null
-          }
+          (v18/*: any*/)
         ]
       },
-      {
-        "kind": "ScalarField",
-        "alias": null,
-        "name": "cursor",
-        "args": null,
-        "storageKey": null
-      }
+      (v19/*: any*/)
     ]
   },
-  {
-    "kind": "LinkedField",
-    "alias": null,
-    "name": "pageInfo",
-    "storageKey": null,
-    "args": null,
-    "concreteType": "PageInfo",
-    "plural": false,
-    "selections": [
-      {
-        "kind": "ScalarField",
-        "alias": null,
-        "name": "endCursor",
-        "args": null,
-        "storageKey": null
-      },
-      {
-        "kind": "ScalarField",
-        "alias": null,
-        "name": "hasNextPage",
-        "args": null,
-        "storageKey": null
-      }
-    ]
-  }
+  (v20/*: any*/)
 ],
-v7 = {
+v22 = {
   "kind": "LinkedField",
   "alias": null,
   "name": "user",
@@ -302,15 +426,12 @@ v7 = {
   "args": null,
   "concreteType": "User",
   "plural": false,
-  "selections": (v2/*: any*/)
-},
-v8 = [
-  {
-    "kind": "Literal",
-    "name": "first",
-    "value": 2147483647
-  }
-];
+  "selections": [
+    (v3/*: any*/),
+    (v2/*: any*/),
+    (v4/*: any*/)
+  ]
+};
 return {
   "kind": "Request",
   "fragment": {
@@ -329,9 +450,11 @@ return {
         "concreteType": "Room",
         "plural": false,
         "selections": [
-          (v3/*: any*/),
-          (v4/*: any*/),
           (v5/*: any*/),
+          (v2/*: any*/),
+          (v6/*: any*/),
+          (v7/*: any*/),
+          (v10/*: any*/),
           {
             "kind": "LinkedField",
             "alias": "videos",
@@ -340,11 +463,55 @@ return {
             "args": null,
             "concreteType": "VideoConnection",
             "plural": false,
-            "selections": (v6/*: any*/)
+            "selections": [
+              {
+                "kind": "LinkedField",
+                "alias": null,
+                "name": "edges",
+                "storageKey": null,
+                "args": null,
+                "concreteType": "VideoEdge",
+                "plural": true,
+                "selections": [
+                  {
+                    "kind": "LinkedField",
+                    "alias": null,
+                    "name": "node",
+                    "storageKey": null,
+                    "args": null,
+                    "concreteType": "Video",
+                    "plural": false,
+                    "selections": [
+                      (v11/*: any*/),
+                      (v12/*: any*/),
+                      (v2/*: any*/),
+                      (v13/*: any*/),
+                      (v14/*: any*/),
+                      (v15/*: any*/),
+                      (v16/*: any*/),
+                      (v17/*: any*/),
+                      {
+                        "kind": "LinkedField",
+                        "alias": "votes",
+                        "name": "__Room_video_votes_connection",
+                        "storageKey": null,
+                        "args": null,
+                        "concreteType": "VideoVoteConnection",
+                        "plural": false,
+                        "selections": (v21/*: any*/)
+                      },
+                      (v18/*: any*/)
+                    ]
+                  },
+                  (v19/*: any*/)
+                ]
+              },
+              (v20/*: any*/)
+            ]
           }
         ]
       },
-      (v7/*: any*/)
+      (v22/*: any*/)
     ]
   },
   "operation": {
@@ -361,9 +528,11 @@ return {
         "concreteType": "Room",
         "plural": false,
         "selections": [
-          (v3/*: any*/),
-          (v4/*: any*/),
           (v5/*: any*/),
+          (v2/*: any*/),
+          (v6/*: any*/),
+          (v7/*: any*/),
+          (v10/*: any*/),
           {
             "kind": "LinkedField",
             "alias": null,
@@ -372,7 +541,60 @@ return {
             "args": (v8/*: any*/),
             "concreteType": "VideoConnection",
             "plural": false,
-            "selections": (v6/*: any*/)
+            "selections": [
+              {
+                "kind": "LinkedField",
+                "alias": null,
+                "name": "edges",
+                "storageKey": null,
+                "args": null,
+                "concreteType": "VideoEdge",
+                "plural": true,
+                "selections": [
+                  {
+                    "kind": "LinkedField",
+                    "alias": null,
+                    "name": "node",
+                    "storageKey": null,
+                    "args": null,
+                    "concreteType": "Video",
+                    "plural": false,
+                    "selections": [
+                      (v11/*: any*/),
+                      (v12/*: any*/),
+                      (v2/*: any*/),
+                      (v13/*: any*/),
+                      (v14/*: any*/),
+                      (v15/*: any*/),
+                      (v16/*: any*/),
+                      (v17/*: any*/),
+                      {
+                        "kind": "LinkedField",
+                        "alias": null,
+                        "name": "votes",
+                        "storageKey": "votes(first:2147483647)",
+                        "args": (v8/*: any*/),
+                        "concreteType": "VideoVoteConnection",
+                        "plural": false,
+                        "selections": (v21/*: any*/)
+                      },
+                      {
+                        "kind": "LinkedHandle",
+                        "alias": null,
+                        "name": "votes",
+                        "args": (v8/*: any*/),
+                        "handle": "connection",
+                        "key": "Room_video_votes",
+                        "filters": null
+                      },
+                      (v18/*: any*/)
+                    ]
+                  },
+                  (v19/*: any*/)
+                ]
+              },
+              (v20/*: any*/)
+            ]
           },
           {
             "kind": "LinkedHandle",
@@ -385,16 +607,22 @@ return {
           }
         ]
       },
-      (v7/*: any*/)
+      (v22/*: any*/)
     ]
   },
   "params": {
     "operationKind": "query",
     "name": "RoomQuery",
     "id": null,
-    "text": "query RoomQuery(\n  $id: String!\n) {\n  room(id: $id) {\n    creator {\n      givenName\n      picture\n    }\n    id\n    name\n    videos(first: 2147483647) {\n      edges {\n        node {\n          addedBy {\n            givenName\n            picture\n          }\n          description\n          id\n          publishedAt\n          thumbnails {\n            default {\n              height\n              width\n              url\n            }\n          }\n          title\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n  }\n  user {\n    givenName\n    picture\n  }\n}\n",
+    "text": "query RoomQuery(\n  $id: String!\n) {\n  room(id: $id) {\n    creator {\n      id\n      givenName\n      picture\n    }\n    id\n    isVotingEnabled\n    name\n    onlineParticipants(first: 2147483647) {\n      edges {\n        node {\n          givenName\n          picture\n        }\n      }\n    }\n    videos(first: 2147483647) {\n      edges {\n        node {\n          addedBy {\n            givenName\n            picture\n          }\n          description\n          id\n          playAt\n          publishedAt\n          thumbnails {\n            default {\n              height\n              width\n              url\n            }\n          }\n          title\n          videoID\n          votes(first: 2147483647) {\n            edges {\n              node {\n                id\n                userID\n                __typename\n              }\n              cursor\n            }\n            pageInfo {\n              endCursor\n              hasNextPage\n            }\n          }\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n  }\n  user {\n    givenName\n    id\n    picture\n  }\n}\n",
     "metadata": {
       "connection": [
+        {
+          "count": null,
+          "cursor": null,
+          "direction": "forward",
+          "path": null
+        },
         {
           "count": null,
           "cursor": null,
@@ -410,6 +638,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = '490828ecb7a6275037279b9b5c389b7c';
+(node/*: any*/).hash = '5055a12e89a40f3b3951fbbcb461e889';
 
 module.exports = node;

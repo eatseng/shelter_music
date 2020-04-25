@@ -1,4 +1,17 @@
+.userAvatar:hover .userName {
+	display: flex;
+  flex-direction: column;
+}
+
 .userAvatarImage {
 	height: 40px;
 	width: 40px;
+}
+
+.userName {
+  display: none;
+}
+
+.userNameHide {
+  display: none;
 }

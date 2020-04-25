@@ -8,7 +8,7 @@ function Modal(props) {
 
   useEffect(() => {
     const keypressHandler = (e) => {
-      if (e.code === "Escape") {
+      if (e.code === 'Enter' || e.code === "Escape") {
         props.turnOff();
       }
     }
