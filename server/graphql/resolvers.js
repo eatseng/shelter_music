@@ -84,7 +84,7 @@ module.exports = (res) => {
     },
 
     enableVoting: async ({input}) => {
-      console.log(input)
+
       let error = null;
       
       try {
@@ -153,7 +153,7 @@ module.exports = (res) => {
       const Room = new RoomModel();
       const [room] = await Room.get(id, userSnakeToCamelCase(res.locals.user));
       Room.disconnect();
-      // console.log(room);
+
       return {
         ...room,
         onlineParticipants: {
@@ -209,10 +209,32 @@ module.exports = (res) => {
 
     user: async () => {
 
+      const User = new UserModel();
+      const [user] = await User.getMongo({id: res.locals.user.id});
+      User.disconnect();
+
       return {
-        id: res.locals.user.id,
-        givenName: res.locals.user.given_name,
-        picture: res.locals.user.picture,
+        ...user,
+        roomInvites: {
+          ...['accepted', 'pending', 'rejected'].reduce((acc, key) => {
+            return {
+              ...acc,
+              [key]: {
+                edges: [
+                  ...(user.roomInvites[key] || [])
+                    .filter(invite => invite.recipient.id === user.id)
+                    .map(node => {
+                      return {
+                        cursor: node.id,
+                        node,
+                      };
+                    }
+                  ),
+                ],
+              },
+            };
+          }, {}),
+        }
       };
 
     },

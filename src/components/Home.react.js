@@ -38,6 +38,48 @@ const query = graphql`
     user {
       givenName
       picture
+      roomInvites {
+        accepted {
+          edges {
+            node {
+              ... on Invite {
+                creator {
+                  ... on User {
+                    givenName
+                    picture
+                  }
+                }
+                room {
+                  ... on Room {
+                    id
+                    name
+                  }
+                }
+              }
+            }
+          }
+        }
+        pending {
+          edges {
+            node {
+              ... on Invite {
+                creator {
+                  ... on User {
+                    givenName
+                    picture
+                  }
+                }
+                room {
+                  ... on Room {
+                    id
+                    name
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 `;
@@ -69,6 +111,28 @@ function Home(props) {
         {`+ New Music Room`}
       </div>
       <div>
+        <div>My Invites</div>
+        {
+          ([
+            ...(user?.roomInvites?.accepted?.edges),
+            ...(user?.roomInvites?.pending?.edges),
+          ])
+            .map(edge => edge.node)
+            .map(invite =>
+              <div
+                key={invite.room.id}
+                className="homeRoomContainer"
+                onClick={roomHandler(invite.room.id)}>
+                <Avatar
+                  title={invite?.creator?.givenName}
+                  url={invite?.creator?.picture}
+                />
+                <div>{invite.room.name}</div>
+              </div>
+            )
+        }
+      </div>
+      <div>
         <div>My Rooms</div>
         {
           (rooms?.edges || [])
@@ -83,7 +147,6 @@ function Home(props) {
                   url={room?.creator?.picture}
                 />
                 <div>{room.name}</div>
-                <div></div>
               </div>
             )
         }

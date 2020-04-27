@@ -91,6 +91,24 @@ module.exports = buildSchema(`
     rooms(after: String, first: Int, before: String, last: Int): RoomConnection
   }
 
+  type Invite {
+    id: String!
+    creator: User!
+    recipient: User!
+    room: Room!
+    status: String!
+  }
+
+  type InviteConnection {
+    edges: [InviteEdge!]
+    pageINfo: PageInfo
+  }
+
+  type InviteEdge {
+    cursor: String!
+    node: Invite
+  }
+
   type InviteMutationPayload {
     error: String
   }
@@ -127,6 +145,12 @@ module.exports = buildSchema(`
     node: Room
   }
 
+  type RoomInvites {
+    accepted: InviteConnection
+    pending: InviteConnection
+    rejected: InviteConnection
+  }
+
   type RoomMutationPayload {
     error: String
     room: Room
@@ -144,6 +168,7 @@ module.exports = buildSchema(`
     name: String!
     onlineTimestamp: Int
     picture: String!
+    roomInvites: RoomInvites
   }
 
   type UserConnection {

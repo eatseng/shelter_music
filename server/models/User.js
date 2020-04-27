@@ -43,8 +43,6 @@ User.prototype.upsertInvite = async function (invite) {
     newInvite = {'roomInvites.pending' : {$each: [invite]}};
   }
 
-  newInvite = {'roomInvites.rejected' : {$each: [invite]}};
-
   const previousInvite = ['accepted', 'pending','rejected']
     .reduce((acc, key) => {
       return {
@@ -122,6 +120,24 @@ User.prototype.getAll = async function () {
 
   return new Promise((resolve, reject) => {
     c.find().toArray((err, docs) => {
+      if (err != null) {
+        reject(err);
+      }
+      resolve(docs);
+    });
+  });
+
+}
+
+User.prototype.getMongo = async function (user) {
+
+  await this.mongo.connect();
+
+  const db = this.mongo.db(options.mongoSession.database);
+  const c = db.collection('participants');
+
+  return new Promise((resolve, reject) => {
+    c.find({id: user.id}).toArray((err, docs) => {
       if (err != null) {
         reject(err);
       }

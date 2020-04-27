@@ -1,6 +1,6 @@
 /**
  * @flow
- * @relayHash 7772d9cfefe036c8393b2c299579faa1
+ * @relayHash c9ff511b4867e1f3856d1e9d0d02f272
  */
 
 /* eslint-disable */
@@ -28,6 +28,50 @@ export type HomeQueryResponse = {|
   +user: ?{|
     +givenName: string,
     +picture: string,
+    +roomInvites: ?{|
+      +accepted: ?{|
+        +edges: ?$ReadOnlyArray<{|
+          +node: ?{|
+            +creator: {|
+              +givenName: string,
+              +picture: string,
+            |},
+            +room: {|
+              +id: ?string,
+              +name: string,
+            |},
+          |}
+        |}>
+      |},
+      +pending: ?{|
+        +edges: ?$ReadOnlyArray<{|
+          +node: ?{|
+            +creator: {|
+              +givenName: string,
+              +picture: string,
+            |},
+            +room: {|
+              +id: ?string,
+              +name: string,
+            |},
+          |}
+        |}>
+      |},
+      +rejected: ?{|
+        +edges: ?$ReadOnlyArray<{|
+          +node: ?{|
+            +creator: {|
+              +givenName: string,
+              +picture: string,
+            |},
+            +room: {|
+              +id: ?string,
+              +name: string,
+            |},
+          |}
+        |}>
+      |},
+    |},
   |},
 |};
 export type HomeQuery = {|
@@ -63,35 +107,97 @@ query HomeQuery {
   user {
     givenName
     picture
+    roomInvites {
+      accepted {
+        edges {
+          node {
+            creator {
+              givenName
+              picture
+            }
+            room {
+              id
+              name
+            }
+          }
+        }
+      }
+      pending {
+        edges {
+          node {
+            creator {
+              givenName
+              picture
+            }
+            room {
+              id
+              name
+            }
+          }
+        }
+      }
+      rejected {
+        edges {
+          node {
+            creator {
+              givenName
+              picture
+            }
+            room {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
   }
 }
 */
 
 const node/*: ConcreteRequest*/ = (function(){
-var v0 = [
-  {
-    "kind": "ScalarField",
-    "alias": null,
-    "name": "givenName",
-    "args": null,
-    "storageKey": null
-  },
-  {
-    "kind": "ScalarField",
-    "alias": null,
-    "name": "picture",
-    "args": null,
-    "storageKey": null
-  }
-],
+var v0 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "givenName",
+  "args": null,
+  "storageKey": null
+},
 v1 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "picture",
+  "args": null,
+  "storageKey": null
+},
+v2 = {
+  "kind": "LinkedField",
+  "alias": null,
+  "name": "creator",
+  "storageKey": null,
+  "args": null,
+  "concreteType": "User",
+  "plural": false,
+  "selections": [
+    (v0/*: any*/),
+    (v1/*: any*/)
+  ]
+},
+v3 = {
   "kind": "ScalarField",
   "alias": null,
   "name": "id",
   "args": null,
   "storageKey": null
 },
-v2 = [
+v4 = {
+  "kind": "ScalarField",
+  "alias": null,
+  "name": "name",
+  "args": null,
+  "storageKey": null
+},
+v5 = [
   {
     "kind": "LinkedField",
     "alias": null,
@@ -110,24 +216,9 @@ v2 = [
         "concreteType": "Room",
         "plural": false,
         "selections": [
-          {
-            "kind": "LinkedField",
-            "alias": null,
-            "name": "creator",
-            "storageKey": null,
-            "args": null,
-            "concreteType": "User",
-            "plural": false,
-            "selections": (v0/*: any*/)
-          },
-          (v1/*: any*/),
-          {
-            "kind": "ScalarField",
-            "alias": null,
-            "name": "name",
-            "args": null,
-            "storageKey": null
-          },
+          (v2/*: any*/),
+          (v3/*: any*/),
+          (v4/*: any*/),
           {
             "kind": "ScalarField",
             "alias": null,
@@ -172,7 +263,45 @@ v2 = [
     ]
   }
 ],
-v3 = {
+v6 = [
+  {
+    "kind": "LinkedField",
+    "alias": null,
+    "name": "edges",
+    "storageKey": null,
+    "args": null,
+    "concreteType": "InviteEdge",
+    "plural": true,
+    "selections": [
+      {
+        "kind": "LinkedField",
+        "alias": null,
+        "name": "node",
+        "storageKey": null,
+        "args": null,
+        "concreteType": "Invite",
+        "plural": false,
+        "selections": [
+          (v2/*: any*/),
+          {
+            "kind": "LinkedField",
+            "alias": null,
+            "name": "room",
+            "storageKey": null,
+            "args": null,
+            "concreteType": "Room",
+            "plural": false,
+            "selections": [
+              (v3/*: any*/),
+              (v4/*: any*/)
+            ]
+          }
+        ]
+      }
+    ]
+  }
+],
+v7 = {
   "kind": "LinkedField",
   "alias": null,
   "name": "user",
@@ -180,9 +309,53 @@ v3 = {
   "args": null,
   "concreteType": "User",
   "plural": false,
-  "selections": (v0/*: any*/)
+  "selections": [
+    (v0/*: any*/),
+    (v1/*: any*/),
+    {
+      "kind": "LinkedField",
+      "alias": null,
+      "name": "roomInvites",
+      "storageKey": null,
+      "args": null,
+      "concreteType": "RoomInvites",
+      "plural": false,
+      "selections": [
+        {
+          "kind": "LinkedField",
+          "alias": null,
+          "name": "accepted",
+          "storageKey": null,
+          "args": null,
+          "concreteType": "InviteConnection",
+          "plural": false,
+          "selections": (v6/*: any*/)
+        },
+        {
+          "kind": "LinkedField",
+          "alias": null,
+          "name": "pending",
+          "storageKey": null,
+          "args": null,
+          "concreteType": "InviteConnection",
+          "plural": false,
+          "selections": (v6/*: any*/)
+        },
+        {
+          "kind": "LinkedField",
+          "alias": null,
+          "name": "rejected",
+          "storageKey": null,
+          "args": null,
+          "concreteType": "InviteConnection",
+          "plural": false,
+          "selections": (v6/*: any*/)
+        }
+      ]
+    }
+  ]
 },
-v4 = [
+v8 = [
   {
     "kind": "Literal",
     "name": "first",
@@ -215,11 +388,11 @@ return {
             "args": null,
             "concreteType": "RoomConnection",
             "plural": false,
-            "selections": (v2/*: any*/)
+            "selections": (v5/*: any*/)
           }
         ]
       },
-      (v3/*: any*/)
+      (v7/*: any*/)
     ]
   },
   "operation": {
@@ -241,31 +414,31 @@ return {
             "alias": null,
             "name": "rooms",
             "storageKey": "rooms(first:2147483647)",
-            "args": (v4/*: any*/),
+            "args": (v8/*: any*/),
             "concreteType": "RoomConnection",
             "plural": false,
-            "selections": (v2/*: any*/)
+            "selections": (v5/*: any*/)
           },
           {
             "kind": "LinkedHandle",
             "alias": null,
             "name": "rooms",
-            "args": (v4/*: any*/),
+            "args": (v8/*: any*/),
             "handle": "connection",
             "key": "Home_rooms",
             "filters": null
           },
-          (v1/*: any*/)
+          (v3/*: any*/)
         ]
       },
-      (v3/*: any*/)
+      (v7/*: any*/)
     ]
   },
   "params": {
     "operationKind": "query",
     "name": "HomeQuery",
     "id": null,
-    "text": "query HomeQuery {\n  home {\n    rooms(first: 2147483647) {\n      edges {\n        node {\n          creator {\n            givenName\n            picture\n          }\n          id\n          name\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n    id\n  }\n  user {\n    givenName\n    picture\n  }\n}\n",
+    "text": "query HomeQuery {\n  home {\n    rooms(first: 2147483647) {\n      edges {\n        node {\n          creator {\n            givenName\n            picture\n          }\n          id\n          name\n          __typename\n        }\n        cursor\n      }\n      pageInfo {\n        endCursor\n        hasNextPage\n      }\n    }\n    id\n  }\n  user {\n    givenName\n    picture\n    roomInvites {\n      accepted {\n        edges {\n          node {\n            creator {\n              givenName\n              picture\n            }\n            room {\n              id\n              name\n            }\n          }\n        }\n      }\n      pending {\n        edges {\n          node {\n            creator {\n              givenName\n              picture\n            }\n            room {\n              id\n              name\n            }\n          }\n        }\n      }\n      rejected {\n        edges {\n          node {\n            creator {\n              givenName\n              picture\n            }\n            room {\n              id\n              name\n            }\n          }\n        }\n      }\n    }\n  }\n}\n",
     "metadata": {
       "connection": [
         {
@@ -283,6 +456,6 @@ return {
 };
 })();
 // prettier-ignore
-(node/*: any*/).hash = 'fa3c6c58e21f9680613fd301a153e229';
+(node/*: any*/).hash = 'a231ab24ff5854a643feb55581ad9cfa';
 
 module.exports = node;

@@ -103,10 +103,10 @@ function Room(props) {
     {fetchPolicy: 'store-and-network'}
   );
 
+  const [airTime, setAirTime] = useState(0);
   const [currentVideoID, setCurrentVideoID] = useState(null);
   const [error, setError] = useState('');
   const [modalOn, setModalOn] = useState(null);
-  const [airTime, setAirTime] = useState(0);
   const [playerState, setPlayerState] = useState(null);
   const [prevVideo, setPrevVideo] = useState(null);
 
